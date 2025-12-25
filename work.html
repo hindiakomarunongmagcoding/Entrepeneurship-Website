@@ -122,24 +122,22 @@
             aspect-ratio: 16 / 9;
         }
 
-#mobile-menu {
+        #mobile-menu {
             backdrop-filter: blur(10px);
         }
-
     </style>
 </head>
 <body class="font-epilogue antialiased overflow-x-hidden selection:bg-pastel-pink selection:text-black">
 
     <div class="grain-overlay"></div>
 
-
+    <!-- Navigation Bar -->
     <nav class="fixed top-0 left-0 w-full z-50 px-6 py-6 flex justify-between items-center mix-blend-difference">
         <a href="index.html" class="text-2xl font-oswald font-bold tracking-tighter hover:text-pastel-pink transition-colors duration-300">
             Arduino Creatives
         </a>
         <div class="hidden md:flex gap-8 font-montserrat text-sm font-medium tracking-wide uppercase text-gray-300">
             <a href="index.html" class="hover:text-pastel-blue transition-colors">Home</a>
-
             <a href="work.html" class="text-pastel-pink border-b border-pastel-pink pb-1">Work</a>
             <a href="index.html#about" class="hover:text-pastel-blue transition-colors">About</a>
         </div>
@@ -150,7 +148,8 @@
         </button>
     </nav>
 
-        <div id="mobile-menu" class="fixed inset-0 z-40 bg-neutral-900 flex flex-col items-center justify-center gap-8 opacity-0 pointer-events-none transition-all duration-300 md:hidden">
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-neutral-900 flex flex-col items-center justify-center gap-8 opacity-0 pointer-events-none transition-all duration-300 md:hidden">
         <a href="index.html" class="font-oswald text-4xl text-pastel-blue uppercase hover:text-white transition-colors mobile-link">Home</a>
         <a href="work.html" class="font-oswald text-4xl text-gray-300 uppercase hover:text-pastel-pink transition-colors mobile-link">Work</a>
         <a href="index.html#about" class="font-oswald text-4xl text-gray-300 uppercase hover:text-pastel-blue transition-colors mobile-link">About</a>
@@ -695,6 +694,7 @@
         </div>
     </div>
 
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Scroll Reveal
@@ -761,10 +761,11 @@
                 const modalContent = modal.querySelector('.modal-content');
                 
                 // Inputs to auto-fill
-                const serviceInput = modal.querySelector('#modalServiceInput');
-                const productInput = modal.querySelector('#modalProductInput');
-                const cinematicInput = modal.querySelector('#modalCinematicInput');
-                const selectBox = modal.querySelector('select'); // for cinematic modal handling
+                const serviceInput = modal.querySelector('.serviceTypeInput'); // Fixed querySelector to use class if id isn't present
+                // NOTE: Previous implementation had IDs for specific modals, using class fallback here if IDs missing in specific modals
+
+                const specificServiceInput = modal.querySelector('input[name="service_type"], input[name="product_type"], input[name="service_category"]');
+                const selectBox = modal.querySelector('select');
 
 
                 if (!modal) return;
@@ -773,22 +774,20 @@
                     modal.classList.remove('hidden');
                     // Small delay to allow display:block to apply before opacity transition
                     setTimeout(() => {
-                        modal.classList.remove('opacity-0', 'pointer-events-none');
+                        modal.classList.remove('opacity-0');
                         modalContent.classList.remove('scale-95', 'opacity-0');
                         modalContent.classList.add('scale-100', 'opacity-100');
                     }, 10);
                     
-                    if (serviceInput && value) serviceInput.value = value;
-                    if (productInput && value) productInput.value = value;
-                    if (cinematicInput && value) cinematicInput.value = value;
+                    if (specificServiceInput && value) specificServiceInput.value = value;
                     if (selectBox && value) selectBox.value = value; 
                 }
 
                 function closeModalFunc() {
                     modalContent.classList.remove('scale-100', 'opacity-100');
                     modalContent.classList.add('scale-95', 'opacity-0');
+                    modal.classList.add('opacity-0');
                     setTimeout(() => {
-                        modal.classList.add('opacity-0', 'pointer-events-none');
                         modal.classList.add('hidden');
                     }, 300);
                 }
@@ -804,9 +803,9 @@
                 });
 
 
-                if (selectBox && cinematicInput) {
+                if (selectBox && specificServiceInput) {
                     selectBox.addEventListener('change', (e) => {
-                        cinematicInput.value = e.target.value;
+                        specificServiceInput.value = e.target.value;
                     });
                 }
             }
@@ -818,27 +817,61 @@
 
             document.querySelectorAll('.contact-form').forEach(form => {
                 form.addEventListener('submit', async function(e) {
-                    e.preventDefault();
+                    // Formspree handles the submission, but we add a visual effect
                     const btn = this.querySelector('.submit-btn');
+                    const originalText = btn.innerText;
                     btn.disabled = true;
                     btn.innerText = "Sending...";
                     
-                    // Simulate network request
-                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    // Allow the form to submit naturally to Formspree
+                    // If using AJAX:
+                    /*
+                    e.preventDefault();
+                    await fetch(this.action, {
+                        method: this.method,
+                        body: new FormData(this),
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+                    */
                     
-                    btn.innerText = "Sent!";
-                    setTimeout(() => {
-                        // Find the parent modal and close it roughly
-                         const modal = this.closest('.fixed');
-                         if(modal) {
-                             const closeBtn = modal.querySelector('.close-modal');
-                             if(closeBtn) closeBtn.click();
-                         }
-                         btn.disabled = false;
-                         btn.innerText = "Send Inquiry"; // Reset text
-                         this.reset();
-                    }, 1000);
-
+                   // Since using form action directly, we just show loading state.
+                   // The page will likely redirect. 
+                   // If you want AJAX behavior with Formspree:
+                   
+                   /*
+                   e.preventDefault();
+                   const formData = new FormData(this);
+                   try {
+                       const response = await fetch(this.action, {
+                           method: this.method,
+                           body: formData,
+                           headers: {
+                               'Accept': 'application/json'
+                           }
+                       });
+                       if (response.ok) {
+                           btn.innerText = "Sent!";
+                           setTimeout(() => {
+                                const modal = this.closest('.fixed');
+                                if(modal) {
+                                    const closeBtn = modal.querySelector('.close-modal');
+                                    if(closeBtn) closeBtn.click();
+                                }
+                                btn.disabled = false;
+                                btn.innerText = originalText;
+                                this.reset();
+                           }, 1000);
+                       } else {
+                           btn.innerText = "Error. Try again.";
+                           btn.disabled = false;
+                       }
+                   } catch (error) {
+                        btn.innerText = "Error. Try again.";
+                        btn.disabled = false;
+                   }
+                   */
                 });
             });
 
