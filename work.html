@@ -807,43 +807,6 @@
             document.querySelectorAll('.contact-form').forEach(form => {
                 form.addEventListener('submit', async function(e) {
 
-                    
-                    const btn = this.querySelector('.submit-btn');
-                    const originalText = btn.innerText;
-                    btn.disabled = true;
-                    btn.innerText = "Sending...";
-                    
-                   e.preventDefault();
-                   const formData = new FormData(this);
-                   try {
-                       const response = await fetch(this.action, {
-                           method: this.method,
-                           body: formData,
-                           headers: {
-                               'Accept': 'application/json'
-                           }
-                       });
-                       if (response.ok) {
-                           btn.innerText = "Sent!";
-                           setTimeout(() => {
-                                const modal = this.closest('.fixed');
-                                if(modal) {
-                                    const closeBtn = modal.querySelector('.close-modal');
-                                    if(closeBtn) closeBtn.click();
-                                }
-                                btn.disabled = false;
-                                btn.innerText = originalText;
-                                this.reset();
-                           }, 1000);
-                       } else {
-                           btn.innerText = "Error. Try again.";
-                           btn.disabled = false;
-                       }
-                   } catch (error) {
-                        btn.innerText = "Error. Try again.";
-                        btn.disabled = false;
-                   }
-                   */
                 });
             });
 
@@ -851,4 +814,5 @@
     </script>
 </body>
 </html>
+
 
