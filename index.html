@@ -111,9 +111,9 @@
             background-clip: text;
         }
         
-        /* Menu transition styles */
-        #mobile-menu {
-            backdrop-filter: blur(10px); /* Optional: adds a nice blur if you reduce opacity */
+
+            #mobile-menu {
+            backdrop-filter: blur(10px);
         }
     </style>
 </head>
@@ -121,9 +121,9 @@
 
     <div class="grain-overlay"></div>
 
-    <!-- Navigation Bar -->
-    <!-- z-50 to ensure it stays on top of the menu overlay -->
-    <nav class="fixed top-0 left-0 w-full z-50 px-6 py-6 flex justify-between items-center mix-blend-difference">
+
+    
+        <nav class="fixed top-0 left-0 w-full z-50 px-6 py-6 flex justify-between items-center mix-blend-difference">
         <a href="#" class="text-2xl font-oswald font-bold tracking-tighter hover:text-pastel-pink transition-colors duration-300">
             Arduino Creatives
         </a>
@@ -133,15 +133,15 @@
             <a href="index.html#about" class="hover:text-pastel-blue transition-colors">About</a>
         </div>
         
-        <!-- Mobile Menu Button -->
-        <button id="mobile-menu-btn" class="md:hidden text-2xl hover:text-pastel-pink transition-transform duration-300 focus:outline-none">
+
+                    <button id="mobile-menu-btn" class="md:hidden text-2xl hover:text-pastel-pink transition-transform duration-300 focus:outline-none">
             <i id="mobile-menu-icon" class="ph ph-list"></i>
         </button>
     </nav>
 
-    <!-- Mobile Menu Overlay -->
-    <!-- Positioned fixed full screen, z-40 to sit below the nav bar but above content -->
-    <div id="mobile-menu" class="fixed inset-0 z-40 bg-neutral-900 flex flex-col items-center justify-center gap-8 opacity-0 pointer-events-none transition-all duration-300 md:hidden">
+
+
+        <div id="mobile-menu" class="fixed inset-0 z-40 bg-neutral-900 flex flex-col items-center justify-center gap-8 opacity-0 pointer-events-none transition-all duration-300 md:hidden">
         <a href="index.html" class="font-oswald text-4xl text-pastel-blue uppercase hover:text-white transition-colors mobile-link">Home</a>
         <a href="work.html" class="font-oswald text-4xl text-gray-300 uppercase hover:text-pastel-pink transition-colors mobile-link">Work</a>
         <a href="index.html#about" class="font-oswald text-4xl text-gray-300 uppercase hover:text-pastel-blue transition-colors mobile-link">About</a>
@@ -176,7 +176,7 @@
     <section class="py-12 border-y border-white/10 bg-neutral-900/50 backdrop-blur-sm overflow-hidden">
         <div class="flex whitespace-nowrap overflow-hidden">
             <div class="animate-marquee flex gap-16 items-center pr-16 font-oswald text-4xl md:text-6xl text-white/20 font-bold uppercase tracking-tighter select-none">
-                <!-- Content duplicated for seamless loop -->
+
                 <span>Mobile Legends</span> <span class="text-pastel-pink">•</span>
                 <span>Capcut</span> <span class="text-pastel-blue">•</span>
                 <span>Canva</span> <span class="text-pastel-pink">•</span>
@@ -444,8 +444,8 @@
     <script>
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Intersection Observer for scroll animations
-            const observerOptions = {
+
+                const observerOptions = {
                 root: null,
                 rootMargin: '0px',
                 threshold: 0.1
@@ -455,7 +455,7 @@
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('is-visible');
-                        observer.unobserve(entry.target); // Only animate once
+                        observer.unobserve(entry.target);
                     }
                 });
             }, observerOptions);
@@ -464,7 +464,7 @@
             revealElements.forEach(el => observer.observe(el));
 
 
-            // Mobile Menu Logic
+
             const mobileMenuBtn = document.getElementById('mobile-menu-btn');
             const mobileMenu = document.getElementById('mobile-menu');
             const mobileMenuIcon = document.getElementById('mobile-menu-icon');
@@ -472,23 +472,21 @@
 
             if (mobileMenuBtn && mobileMenu && mobileMenuIcon) {
                 mobileMenuBtn.addEventListener('click', () => {
-                    // Toggle visibility classes
+
                     mobileMenu.classList.toggle('opacity-0');
                     mobileMenu.classList.toggle('pointer-events-none');
                     
-                    // Toggle Icon between List and X
                     if (mobileMenu.classList.contains('opacity-0')) {
                         mobileMenuIcon.classList.remove('ph-x');
                         mobileMenuIcon.classList.add('ph-list');
-                        document.body.style.overflow = ''; // Restore scrolling
+                        document.body.style.overflow = '';
                     } else {
                         mobileMenuIcon.classList.remove('ph-list');
                         mobileMenuIcon.classList.add('ph-x');
-                        document.body.style.overflow = 'hidden'; // Lock scrolling
+                        document.body.style.overflow = 'hidden';
                     }
                 });
 
-                // Close menu when a link is clicked
                 mobileLinks.forEach(link => {
                     link.addEventListener('click', () => {
                         mobileMenu.classList.add('opacity-0');
@@ -519,3 +517,4 @@
     </script>
 </body>
 </html>
+
