@@ -131,7 +131,6 @@
 
     <div class="grain-overlay"></div>
 
-    <!-- Navigation Bar -->
     <nav class="fixed top-0 left-0 w-full z-50 px-6 py-6 flex justify-between items-center mix-blend-difference">
         <a href="index.html" class="text-2xl font-oswald font-bold tracking-tighter hover:text-pastel-pink transition-colors duration-300">
             Arduino Creatives
@@ -142,13 +141,11 @@
             <a href="index.html#about" class="hover:text-pastel-blue transition-colors">About</a>
         </div>
         
-        <!-- Mobile Menu Button -->
         <button id="mobile-menu-btn" class="md:hidden text-2xl hover:text-pastel-pink transition-transform duration-300 focus:outline-none">
             <i id="mobile-menu-icon" class="ph ph-list"></i>
         </button>
     </nav>
 
-    <!-- Mobile Menu Overlay -->
     <div id="mobile-menu" class="fixed inset-0 z-40 bg-neutral-900 flex flex-col items-center justify-center gap-8 opacity-0 pointer-events-none transition-all duration-300 md:hidden">
         <a href="index.html" class="font-oswald text-4xl text-pastel-blue uppercase hover:text-white transition-colors mobile-link">Home</a>
         <a href="work.html" class="font-oswald text-4xl text-gray-300 uppercase hover:text-pastel-pink transition-colors mobile-link">Work</a>
@@ -697,7 +694,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Scroll Reveal
             const observerOptions = {
                 root: null,
                 rootMargin: '0px',
@@ -717,7 +713,6 @@
             revealElements.forEach(el => observer.observe(el));
 
 
-            // Mobile Menu Logic (Updated)
             const mobileMenuBtn = document.getElementById('mobile-menu-btn');
             const mobileMenu = document.getElementById('mobile-menu');
             const mobileMenuIcon = document.getElementById('mobile-menu-icon');
@@ -725,11 +720,9 @@
 
             if (mobileMenuBtn && mobileMenu && mobileMenuIcon) {
                 mobileMenuBtn.addEventListener('click', () => {
-                    // Toggle visibility classes
                     mobileMenu.classList.toggle('opacity-0');
                     mobileMenu.classList.toggle('pointer-events-none');
                     
-                    // Toggle Icon between List and X
                     if (mobileMenu.classList.contains('opacity-0')) {
                         mobileMenuIcon.classList.remove('ph-x');
                         mobileMenuIcon.classList.add('ph-list');
@@ -741,7 +734,6 @@
                     }
                 });
 
-                // Close menu when a link is clicked
                 mobileLinks.forEach(link => {
                     link.addEventListener('click', () => {
                         mobileMenu.classList.add('opacity-0');
@@ -753,16 +745,13 @@
                 });
             }
 
-            // --- MODAL LOGIC (Existing code preserved) ---
             function setupModal(modalId, triggerSelector, dataAttribute) {
                 const modal = document.getElementById(modalId);
                 const triggers = document.querySelectorAll(triggerSelector);
                 const closeBtns = modal.querySelectorAll('.close-modal');
                 const modalContent = modal.querySelector('.modal-content');
                 
-                // Inputs to auto-fill
-                const serviceInput = modal.querySelector('.serviceTypeInput'); // Fixed querySelector to use class if id isn't present
-                // NOTE: Previous implementation had IDs for specific modals, using class fallback here if IDs missing in specific modals
+                const serviceInput = modal.querySelector('.serviceTypeInput');
 
                 const specificServiceInput = modal.querySelector('input[name="service_type"], input[name="product_type"], input[name="service_category"]');
                 const selectBox = modal.querySelector('select');
@@ -772,8 +761,8 @@
 
                 function openModal(value) {
                     modal.classList.remove('hidden');
-                    // Small delay to allow display:block to apply before opacity transition
-                    setTimeout(() => {
+
+                        setTimeout(() => {
                         modal.classList.remove('opacity-0');
                         modalContent.classList.remove('scale-95', 'opacity-0');
                         modalContent.classList.add('scale-100', 'opacity-100');
@@ -817,30 +806,13 @@
 
             document.querySelectorAll('.contact-form').forEach(form => {
                 form.addEventListener('submit', async function(e) {
-                    // Formspree handles the submission, but we add a visual effect
+
+                    
                     const btn = this.querySelector('.submit-btn');
                     const originalText = btn.innerText;
                     btn.disabled = true;
                     btn.innerText = "Sending...";
                     
-                    // Allow the form to submit naturally to Formspree
-                    // If using AJAX:
-                    /*
-                    e.preventDefault();
-                    await fetch(this.action, {
-                        method: this.method,
-                        body: new FormData(this),
-                        headers: {
-                            'Accept': 'application/json'
-                        }
-                    });
-                    */
-                    
-                   // Since using form action directly, we just show loading state.
-                   // The page will likely redirect. 
-                   // If you want AJAX behavior with Formspree:
-                   
-                   /*
                    e.preventDefault();
                    const formData = new FormData(this);
                    try {
@@ -879,3 +851,4 @@
     </script>
 </body>
 </html>
+
