@@ -3,10 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Portal Login | Romblon National High School</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <title>Quick Pass | Romblon National High School</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
     <style>
-        /* Global Styles */
+        :root {
+            --primary-blue: #3b82f6;
+            --primary-green: #29ce52;
+            --dark-blue: #242B67;
+            --soft-white: #f8fafc;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -15,299 +22,450 @@
         }
 
         body {
+            margin: 0;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #a8d0e6 0%, #f0f9ff 100%);
             position: relative;
             padding: 20px;
-            overflow-x: hidden;
+            overflow: hidden;
+            background: #ffffff;
         }
 
-        /* Dynamic Background Animation */
-        body::before {
-            content: "";
-            position: absolute;
+        /* --- LOADING SCREEN STYLES --- */
+        #loading-screen {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'); /* Scenic field placeholder */
-            background-size: cover;
-            background-position: center;
-            opacity: 0.15;
+            background: white;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s;
+        }
+
+        .welcome-content {
+            text-align: center;
+            animation: scalePulse 2s infinite ease-in-out;
+        }
+
+        @keyframes scalePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .welcome-logo {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 30px;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+        }
+
+        .welcome-text {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            color: var(--dark-blue);
+            margin-bottom: 10px;
+            opacity: 0;
+            animation: fadeInDown 0.8s forwards 0.3s;
+        }
+
+        .welcome-subtext {
+            font-size: 18px;
+            color: var(--primary-green);
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: fadeInUp 0.8s forwards 0.6s;
+        }
+
+        /* Sleek Progress Bar */
+        .progress-container {
+            width: 250px;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            margin-top: 40px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            position: absolute;
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-green));
+            border-radius: 10px;
+            animation: loadProgress 2.5s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+        }
+
+        @keyframes loadProgress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* --- MAIN PORTAL STYLES --- */
+        .animation-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
             z-index: 0;
-            animation: backgroundZoom 20s infinite alternate linear;
+            overflow: hidden;
         }
 
-        @keyframes backgroundZoom {
-            from { transform: scale(1); }
-            to { transform: scale(1.1); }
-        }
-
-        /* Floating Shapes Animation */
         .shape {
             position: absolute;
-            background: rgba(255, 255, 255, 0.4);
-            border-radius: 50%;
-            z-index: 0;
-            pointer-events: none;
-            animation: float 10s infinite ease-in-out;
+            filter: blur(8rem);
+            opacity: 0.4;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-50px) rotate(180deg); }
+        .shape1 {
+            top: 42%; left: 70%; width: 30rem; height: 30rem;
+            background: var(--primary-blue);
+            border-radius: 24% 76% 77% 23% / 30% 30% 70% 70%;
+            animation: shape1 20s infinite alternate;
         }
 
-        /* Main Container with Entrance Animation */
+        .shape2 {
+            top: 33%; left: 40%; width: 35rem; height: 25rem;
+            background: var(--primary-green);
+            border-radius: 73% 27% 77% 23% / 53% 4% 96% 47%;
+            animation: shape2 25s infinite alternate;
+        }
+
+        @keyframes shape1 {
+            0% { transform: translate(0, 0); border-radius: 24% 76% 77% 23%; }
+            100% { transform: translate(-20%, -15%); border-radius: 60% 40% 30% 70%; }
+        }
+
+        @keyframes shape2 {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(15%, 20%); border-radius: 30% 70% 70% 30%; }
+        }
+
         .container {
             position: relative;
-            z-index: 1;
+            z-index: 10;
             width: 100%;
-            max-width: 500px;
+            max-width: 450px;
             padding: 40px 35px;
-            background-color: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            background-color: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
             display: flex;
             flex-direction: column;
             align-items: center;
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(20px);
+        }
+
+        .container.loaded {
             animation: fadeInUp 0.8s forwards ease-out;
         }
 
         @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        h1 {
-            text-align: center;
-            color: #242B67;
-            font-size: 28px;
-            margin-bottom: 10px;
-            line-height: 1.2;
-        }
-
-        h2 {
-            text-align: center;
-            margin: 20px 0 15px;
-            color: #444;
-            font-size: 22px;
-            font-weight: 600;
-        }
-
-        .input-group {
-            width: 100%;
-            margin-bottom: 15px;
-            position: relative;
-        }
-
-        input {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #e1e8ed;
-            border-radius: 12px;
-            font-size: 15px;
-            transition: all 0.3s ease;
-            outline: none;
-        }
-
-        input:focus {
-            border-color: #a8d0e6;
-            box-shadow: 0 0 10px rgba(168, 208, 230, 0.4);
-            transform: translateY(-2px);
-        }
-
-        button {
-            font-size: 18px;
-            width: 100%;
-            padding: 14px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 12px;
-            background-color: #29ce52;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 4px 15px rgba(41, 206, 82, 0.3);
-        }
-
-        button:hover {
-            background-color: #1d5752;
-            transform: scale(1.02);
-            box-shadow: 0 6px 20px rgba(29, 87, 82, 0.4);
-        }
-
-        button:active {
-            transform: scale(0.98);
-        }
-
-        .status-msg {
-            text-align: center;
-            font-size: 14px;
-            margin-top: 8px;
-            min-height: 20px;
-            font-weight: 500;
-        }
-
-        #error, #signupError { color: #e74c3c; }
-        #signupSuccess { color: #27ae60; }
-
-        hr {
-            margin: 25px 0;
-            border: none;
-            border-top: 1px dashed #cbd5e0;
-            width: 100%;
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .logo-container {
-            width: 100px;
-            height: 100px;
+            width: 90px;
+            height: 90px;
             margin-bottom: 20px;
-            background: #f0f4f8;
+            background: #ffffff;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
         }
 
-        .logo-container img {
-            width: 80%;
-            height: auto;
+        .logo-container img { width: 85%; height: auto; }
+
+        h1 {
+            text-align: center;
+            color: var(--dark-blue);
+            font-size: 24px;
+            margin-bottom: 5px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
         }
 
-        /* Form section transition */
-        .form-section {
+        .subtitle {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .input-group { width: 100%; margin-bottom: 18px; }
+
+        input {
             width: 100%;
-            animation: fadeIn 0.5s ease-in;
+            padding: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            outline: none;
+            background: rgba(255, 255, 255, 0.9);
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        input:focus {
+            border-color: var(--primary-blue);
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        button {
+            font-size: 17px;
+            width: 100%;
+            padding: 16px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 14px;
+            background-color: var(--primary-green);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 15px -3px rgba(41, 206, 82, 0.3);
+        }
+
+        button:hover {
+            background-color: #1d5752;
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(29, 87, 82, 0.3);
+        }
+
+        button:active { transform: translateY(0); }
+
+        .caution-text {
+            font-size: 13px;
+            color: #64748b;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .toggle-link {
+            color: var(--primary-blue);
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .toggle-link:hover { color: var(--dark-blue); }
+
+        .status-msg {
+            text-align: center;
+            font-size: 14px;
+            margin-top: 15px;
+            min-height: 20px;
+            font-weight: 500;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .error { color: #b91c1c; background: #fef2f2; border: 1px solid #fee2e2; }
+        .success { color: #065f46; background: #ecfdf5; border: 1px solid #d1fae5; }
+        .hidden { display: none; }
+
+        /* Smooth Hide */
+        .fade-out {
+            opacity: 0 !important;
+            visibility: hidden !important;
         }
     </style>
 </head>
 <body>
 
-    <!-- Animated Background Shapes -->
-    <div class="shape" style="width: 80px; height: 80px; top: 10%; left: 10%; animation-delay: 0s;"></div>
-    <div class="shape" style="width: 120px; height: 120px; bottom: 15%; right: 10%; animation-delay: 2s;"></div>
-    <div class="shape" style="width: 60px; height: 60px; top: 60%; left: 5%; animation-delay: 4s;"></div>
+    <!-- Loading Screen Overlay -->
+    <div id="loading-screen">
+        <div class="welcome-content">
+            <img src="QP_TM.png" alt="RNHS Logo" class="welcome-logo" onerror="this.src='https://via.placeholder.com/120?text=RNHS'">
+            <div class="welcome-text">Welcome to Romblon National High School</div>
+            <div class="welcome-subtext">Quick Pass</div>
+            <div class="progress-container">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+    </div>
 
-    <div class="container">
+    <!-- Main Content Background -->
+    <div class="animation-container">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+    </div>
+
+    <!-- Auth Container -->
+    <div class="container" id="portal-container">
         <div class="logo-container">
-            <!-- Using a fallback SVG if local image not found -->
             <img src="QP_TM.png" alt="RNHS Logo" onerror="this.src='https://via.placeholder.com/100?text=RNHS'">
         </div>
 
-        <h1>Welcome to Romblon National High School</h1>
+        <h1 id="form-title">Student Portal Login</h1>
+        <p class="subtitle">Enter your credentials to continue</p>
         
-        <hr>
-
-        <div class="form-section">
-            <h2>Portal Login</h2>
+        <div id="auth-form" style="width: 100%;">
             <div class="input-group">
-                <input type="text" id="username" placeholder="Username">
+                <input type="email" id="email" placeholder="Email Address">
             </div>
             <div class="input-group">
                 <input type="password" id="password" placeholder="Password">
             </div>
-            <button onclick="login()">Sign In</button>
-            <p id="error" class="status-msg"></p>
+            
+            <button id="login-btn">Sign In</button>
+            <button id="signup-btn" class="hidden" style="background-color: var(--dark-blue);">Create Account</button>
+            
+            <p id="message" class="status-msg hidden"></p>
         </div>
 
-        <hr>
-
-        <div class="form-section">
-            <h2>Create New Profile</h2>
-            <div class="input-group">
-                <input type="text" id="signupName" placeholder="Full Name">
-            </div>
-            <div class="input-group">
-                <input type="text" id="signupUsername" placeholder="Preferred Username">
-            </div>
-            <div class="input-group">
-                <input type="password" id="signupPassword" placeholder="Set Password">
-            </div>
-            <button onclick="signup()" style="background-color: #242B67;">Register Account</button>
-            <p id="signupError" class="status-msg"></p>
-            <p id="signupSuccess" class="status-msg"></p>
+        <div class="caution-text" id="toggle-area">
+            Don't have an account yet? <span class="toggle-link" onclick="toggleAuth()">Create account caution</span>
         </div>
     </div>
 
     <script>
-        function showMessage(elementId, text, duration = 3000) {
-            const el = document.getElementById(elementId);
-            el.innerText = text;
+        // Use DOMContentLoaded instead of window.load for better reliability
+        document.addEventListener('DOMContentLoaded', () => {
+            const loader = document.getElementById('loading-screen');
+            const portal = document.getElementById('portal-container');
+
+            // Force transition after 2.6 seconds (length of the progress bar animation)
             setTimeout(() => {
-                el.innerText = "";
-            }, duration);
+                loader.classList.add('fade-out');
+                portal.classList.add('loaded');
+                
+                // Cleanup DOM after transition finishes
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 800);
+            }, 2600);
+        });
+
+        // Supabase Initialization
+        const supabaseUrl = 'https://qpzirlvpdlvewtuqlbjz.supabase.co';
+        const supabaseKey = 'sb_publishable_6hxgL5FhVBTBaqT9mjJ95w_D2LCTLrv';
+        
+        let supabaseClient;
+        try {
+            supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+        } catch (e) {
+            console.error("Supabase Initialization Error:", e);
         }
 
-        function login() {
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
+        const messageElement = document.getElementById('message');
+        const loginBtn = document.getElementById('login-btn');
+        const signupBtn = document.getElementById('signup-btn');
+        const formTitle = document.getElementById('form-title');
+        const toggleArea = document.getElementById('toggle-area');
 
-            if (!user || !pass) {
-                showMessage('error', 'Please fill in all login fields.');
-                return;
+        let isLogin = true;
+
+        function showStatus(text, type) {
+            messageElement.innerText = text;
+            messageElement.className = `status-msg ${type}`;
+            messageElement.classList.remove('hidden');
+        }
+
+        function toggleAuth() {
+            isLogin = !isLogin;
+            messageElement.classList.add('hidden');
+            if (isLogin) {
+                formTitle.innerText = "Student Portal Login";
+                loginBtn.classList.remove('hidden');
+                signupBtn.classList.add('hidden');
+                toggleArea.innerHTML = 'Don\'t have an account yet? <span class="toggle-link" onclick="toggleAuth()">Create account caution</span>';
+            } else {
+                formTitle.innerText = "Create Your Account";
+                loginBtn.classList.add('hidden');
+                signupBtn.classList.remove('hidden');
+                toggleArea.innerHTML = 'Already have an account? <span class="toggle-link" onclick="toggleAuth()">Sign In</span>';
             }
-
-            // Simple interactive feedback
-            const btn = event.target;
-            btn.innerText = "Verifying...";
-            btn.disabled = true;
-
-            setTimeout(() => {
-                showMessage('error', 'Invalid username or password. Please try again.');
-                btn.innerText = "Sign In";
-                btn.disabled = false;
-            }, 1200);
         }
 
-        function signup() {
-            const name = document.getElementById('signupName').value;
-            const user = document.getElementById('signupUsername').value;
-            const pass = document.getElementById('signupPassword').value;
+        loginBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            if (!supabaseClient) return showStatus("Database connection error.", "error");
 
-            if (!name || !user || !pass) {
-                showMessage('signupError', 'All fields are required for registration.');
-                return;
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) return showStatus("Please fill in all fields.", "error");
+
+            loginBtn.innerText = "Signing In...";
+            loginBtn.disabled = true;
+
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+                if (error) {
+                    showStatus(error.message, "error");
+                    loginBtn.innerText = "Sign In";
+                    loginBtn.disabled = false;
+                } else {
+                    showStatus("Authenticated! Loading dashboard...", "success");
+                }
+            } catch (err) {
+                showStatus("Network Error. Check your connection.", "error");
+                loginBtn.innerText = "Sign In";
+                loginBtn.disabled = false;
             }
+        });
 
-            const btn = event.target;
-            btn.innerText = "Creating Profile...";
-            btn.disabled = true;
+        signupBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            if (!supabaseClient) return showStatus("Database connection error.", "error");
 
-            setTimeout(() => {
-                showMessage('signupSuccess', 'Profile created successfully! You may now login.');
-                document.getElementById('signupName').value = "";
-                document.getElementById('signupUsername').value = "";
-                document.getElementById('signupPassword').value = "";
-                btn.innerText = "Register Account";
-                btn.disabled = false;
-            }, 1500);
-        }
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
 
-        // Add a subtle parallax effect on mouse move
+            if (!email || !password) return showStatus("Please fill in all fields.", "error");
+
+            signupBtn.innerText = "Registering...";
+            signupBtn.disabled = true;
+
+            try {
+                const { data, error } = await supabaseClient.auth.signUp({ email, password });
+                if (error) {
+                    showStatus(error.message, "error");
+                    signupBtn.innerText = "Create Account";
+                    signupBtn.disabled = false;
+                } else {
+                    showStatus("Success! Check your email for a link.", "success");
+                }
+            } catch (err) {
+                showStatus("Network Error. Check your connection.", "error");
+                signupBtn.innerText = "Create Account";
+                signupBtn.disabled = false;
+            }
+        });
+
+        // Mouse Parallax Interaction
         document.addEventListener('mousemove', (e) => {
-            const amount = 15;
+            const amount = 12;
             const x = (e.clientX / window.innerWidth - 0.5) * amount;
             const y = (e.clientY / window.innerHeight - 0.5) * amount;
             const container = document.querySelector('.container');
-            container.style.boxShadow = `${-x}px ${-y}px 40px rgba(0,0,0,0.15)`;
+            if (container && container.classList.contains('loaded')) {
+                container.style.transform = `translate(${x}px, ${y}px)`;
+            }
         });
     </script>
 </body>
