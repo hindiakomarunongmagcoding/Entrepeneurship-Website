@@ -35,7 +35,6 @@
             background: #ffffff;
         }
 
-
         #loading-screen {
             position: fixed;
             top: 0;
@@ -57,6 +56,9 @@
             width: 100%;
             max-width: 320px;
             animation: scalePulse 2s infinite ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         @keyframes scalePulse {
@@ -64,17 +66,19 @@
             50% { transform: scale(1.03); }
         }
 
+        /* 8:2 (4:1) Ratio Logo for Welcome Screen */
         .welcome-logo {
-            width: 100px;
-            height: 100px;
+            width: 240px; 
+            height: 60px;
             margin-bottom: 25px;
-            filter: drop-shadow(0 8px 12px rgba(0,0,0,0.1));
+            object-fit: contain;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05));
         }
 
         .welcome-text {
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
-            font-size: 22px;
+            font-size: 20px;
             color: var(--dark-blue);
             margin-bottom: 8px;
             opacity: 0;
@@ -83,7 +87,7 @@
         }
 
         .welcome-subtext {
-            font-size: 16px;
+            font-size: 14px;
             color: var(--primary-green);
             font-weight: 600;
             letter-spacing: 2px;
@@ -93,8 +97,8 @@
         }
 
         .progress-container {
-            width: 200px;
-            height: 5px;
+            width: 180px;
+            height: 4px;
             background: #e2e8f0;
             border-radius: 10px;
             margin: 35px auto 0;
@@ -115,7 +119,6 @@
             0% { width: 0%; }
             100% { width: 100%; }
         }
-
 
         .animation-container {
             position: fixed;
@@ -188,20 +191,22 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* 8:2 (4:1) Ratio Logo for Portal Container */
         .logo-container {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 18px;
-            background: #ffffff;
-            border-radius: 50%;
+            width: 180px;
+            height: 45px;
+            margin-bottom: 22px;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.04);
         }
 
-        .logo-container img { width: 85%; height: auto; }
+        .logo-container img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain; 
+        }
 
         h1 {
             text-align: center;
@@ -301,41 +306,41 @@
             visibility: hidden !important;
         }
 
-
         @media (max-width: 360px) {
             .container { padding: 25px 18px; }
             h1 { font-size: 19px; }
             .welcome-text { font-size: 18px; }
+            .welcome-logo { width: 200px; height: 50px; }
+            .logo-container { width: 160px; height: 40px; }
         }
     </style>
 </head>
 <body>
 
-
     <div id="loading-screen">
         <div class="welcome-content">
-            <img src="quickpass_logo.png" alt="Quick Pass Logo" class="welcome-logo" onerror="this.src='https://via.placeholder.com/120?text=Quick Pass'">
+            <!-- 8:2 Ratio Placeholder -->
+            <img src="quickpass_logo.png" alt="Quick Pass Logo" class="welcome-logo" onerror="this.src='https://placehold.co/800x200/ffffff/242B67?text=QUICK+PASS'">
             <div class="welcome-text">Welcome to Romblon National High School</div>
-            <div class="welcome-subtext">Introducing Quick Pass <br>by Co-Misyon</br></div>
+            <div class="welcome-subtext">Introducing Quick Pass <br>by Co-Misyon</div>
             <div class="progress-container">
                 <div class="progress-bar"></div>
             </div>
         </div>
     </div>
 
-
     <div class="animation-container">
         <div class="shape shape1"></div>
         <div class="shape shape2"></div>
     </div>
 
-
     <div class="container" id="portal-container">
+        <!-- 8:2 Ratio Placeholder -->
         <div class="logo-container">
-            <img src="quickpass_logo.png" alt="Quick Pass Logo" onerror="this.src='https://via.placeholder.com/100?text=Quick pass'">
+            <img src="quickpass_logo_horizontal.png" alt="Quick Pass Logo" onerror="this.src='https://placehold.co/800x200/ffffff/242B67?text=QUICK+PASS'">
         </div>
 
-        <h1 id="form-title">Welcome Premierians</h1>
+        <h1 id="form-title">Student Portal Login</h1>
         
         <div id="auth-form" style="width: 100%;">
             <div class="input-group">
@@ -403,7 +408,7 @@
                 formTitle.innerText = "Student Portal Login";
                 loginBtn.classList.remove('hidden');
                 signupBtn.classList.add('hidden');
-                toggleArea.innerHTML = 'Don\'t have an account yet? <br><span class="toggle-link" onclick="toggleAuth()">Create account caution</span>';
+                toggleArea.innerHTML = 'Don\'t have an account yet? <br><span class="toggle-link" onclick="toggleAuth()">Create account</span>';
             } else {
                 formTitle.innerText = "Create Your Account";
                 loginBtn.classList.add('hidden');
@@ -468,7 +473,6 @@
             }
         });
 
-        // Parallax optimized for performance: only run if not on a touch device or use mouse events
         if (window.matchMedia("(pointer: fine)").matches) {
             document.addEventListener('mousemove', (e) => {
                 const amount = 8;
@@ -483,6 +487,3 @@
     </script>
 </body>
 </html>
-
-
-
