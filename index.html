@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Quick Pass | Romblon National High School</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
@@ -19,6 +19,7 @@
             margin: 0;
             padding: 0;
             font-family: 'Poppins', 'Montserrat', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -29,12 +30,12 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            padding: 20px;
+            padding: 15px;
             overflow: hidden;
             background: #ffffff;
         }
 
-        /* --- LOADING SCREEN STYLES --- */
+
         #loading-screen {
             position: fixed;
             top: 0;
@@ -48,37 +49,41 @@
             justify-content: center;
             align-items: center;
             transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s;
+            padding: 20px;
         }
 
         .welcome-content {
             text-align: center;
+            width: 100%;
+            max-width: 320px;
             animation: scalePulse 2s infinite ease-in-out;
         }
 
         @keyframes scalePulse {
             0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            50% { transform: scale(1.03); }
         }
 
         .welcome-logo {
-            width: 120px;
-            height: 120px;
-            margin-bottom: 30px;
-            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+            width: 100px;
+            height: 100px;
+            margin-bottom: 25px;
+            filter: drop-shadow(0 8px 12px rgba(0,0,0,0.1));
         }
 
         .welcome-text {
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
-            font-size: 28px;
+            font-size: 22px;
             color: var(--dark-blue);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             opacity: 0;
             animation: fadeInDown 0.8s forwards 0.3s;
+            line-height: 1.3;
         }
 
         .welcome-subtext {
-            font-size: 18px;
+            font-size: 16px;
             color: var(--primary-green);
             font-weight: 600;
             letter-spacing: 2px;
@@ -87,13 +92,12 @@
             animation: fadeInUp 0.8s forwards 0.6s;
         }
 
-        /* Sleek Progress Bar */
         .progress-container {
-            width: 250px;
-            height: 6px;
+            width: 200px;
+            height: 5px;
             background: #e2e8f0;
             border-radius: 10px;
-            margin-top: 40px;
+            margin: 35px auto 0;
             overflow: hidden;
             position: relative;
         }
@@ -112,7 +116,7 @@
             100% { width: 100%; }
         }
 
-        /* --- MAIN PORTAL STYLES --- */
+
         .animation-container {
             position: fixed;
             top: 0;
@@ -125,44 +129,45 @@
 
         .shape {
             position: absolute;
-            filter: blur(8rem);
-            opacity: 0.4;
+            filter: blur(5rem);
+            opacity: 0.35;
         }
 
         .shape1 {
-            top: 42%; left: 70%; width: 30rem; height: 30rem;
+            top: 40%; left: 60%; width: 20rem; height: 20rem;
             background: var(--primary-blue);
             border-radius: 24% 76% 77% 23% / 30% 30% 70% 70%;
-            animation: shape1 20s infinite alternate;
+            animation: shape1 15s infinite alternate ease-in-out;
         }
 
         .shape2 {
-            top: 33%; left: 40%; width: 35rem; height: 25rem;
+            top: 20%; left: 10%; width: 25rem; height: 18rem;
             background: var(--primary-green);
             border-radius: 73% 27% 77% 23% / 53% 4% 96% 47%;
-            animation: shape2 25s infinite alternate;
+            animation: shape2 20s infinite alternate ease-in-out;
         }
 
         @keyframes shape1 {
-            0% { transform: translate(0, 0); border-radius: 24% 76% 77% 23%; }
-            100% { transform: translate(-20%, -15%); border-radius: 60% 40% 30% 70%; }
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(-10%, -10%) scale(1.2); border-radius: 60% 40% 30% 70%; }
         }
 
         @keyframes shape2 {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(15%, 20%); border-radius: 30% 70% 70% 30%; }
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(10%, 15%) rotate(45deg); border-radius: 30% 70% 70% 30%; }
         }
 
         .container {
             position: relative;
             z-index: 10;
             width: 100%;
-            max-width: 450px;
-            padding: 40px 35px;
-            background-color: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(20px);
-            border-radius: 28px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            max-width: 420px;
+            padding: 35px 25px;
+            background-color: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.12);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -179,21 +184,21 @@
         }
 
         @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
+            from { opacity: 0; transform: translateY(-15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .logo-container {
-            width: 90px;
-            height: 90px;
-            margin-bottom: 20px;
+            width: 80px;
+            height: 80px;
+            margin-bottom: 18px;
             background: #ffffff;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.04);
         }
 
         .logo-container img { width: 85%; height: auto; }
@@ -201,66 +206,70 @@
         h1 {
             text-align: center;
             color: var(--dark-blue);
-            font-size: 24px;
-            margin-bottom: 5px;
+            font-size: 22px;
+            margin-bottom: 6px;
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
         }
 
         .subtitle {
             color: #64748b;
-            font-size: 14px;
-            margin-bottom: 30px;
+            font-size: 13px;
+            margin-bottom: 25px;
             text-align: center;
         }
 
-        .input-group { width: 100%; margin-bottom: 18px; }
+        .input-group { width: 100%; margin-bottom: 16px; }
 
         input {
             width: 100%;
-            padding: 16px;
+            padding: 14px 16px;
             border: 2px solid #e2e8f0;
-            border-radius: 14px;
-            font-size: 15px;
+            border-radius: 12px;
+            font-size: 16px;
             transition: all 0.3s ease;
             outline: none;
             background: rgba(255, 255, 255, 0.9);
+            appearance: none;
         }
 
         input:focus {
             border-color: var(--primary-blue);
             background: #ffffff;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
         }
 
         button {
-            font-size: 17px;
+            font-size: 16px;
             width: 100%;
-            padding: 16px;
-            margin-top: 10px;
+            padding: 15px;
+            margin-top: 8px;
             border: none;
-            border-radius: 14px;
+            border-radius: 12px;
             background-color: var(--primary-green);
             color: white;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 15px -3px rgba(41, 206, 82, 0.3);
+            transition: all 0.2s ease;
+            box-shadow: 0 8px 15px -3px rgba(41, 206, 82, 0.25);
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         button:hover {
             background-color: #1d5752;
-            transform: translateY(-2px);
-            box-shadow: 0 20px 25px -5px rgba(29, 87, 82, 0.3);
+            transform: translateY(-1px);
         }
 
-        button:active { transform: translateY(0); }
+        button:active { transform: translateY(0); scale: 0.98; }
 
         .caution-text {
             font-size: 13px;
             color: #64748b;
             text-align: center;
             margin-top: 20px;
+            line-height: 1.5;
         }
 
         .toggle-link {
@@ -268,67 +277,72 @@
             font-weight: 600;
             cursor: pointer;
             text-decoration: none;
-            transition: color 0.2s;
+            display: inline-block;
+            margin-top: 4px;
         }
-
-        .toggle-link:hover { color: var(--dark-blue); }
 
         .status-msg {
             text-align: center;
-            font-size: 14px;
+            font-size: 13px;
             margin-top: 15px;
             min-height: 20px;
             font-weight: 500;
             padding: 10px;
             border-radius: 10px;
+            width: 100%;
         }
 
         .error { color: #b91c1c; background: #fef2f2; border: 1px solid #fee2e2; }
         .success { color: #065f46; background: #ecfdf5; border: 1px solid #d1fae5; }
         .hidden { display: none; }
 
-        /* Smooth Hide */
         .fade-out {
             opacity: 0 !important;
             visibility: hidden !important;
+        }
+
+
+        @media (max-width: 360px) {
+            .container { padding: 25px 18px; }
+            h1 { font-size: 19px; }
+            .welcome-text { font-size: 18px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Loading Screen Overlay -->
+
     <div id="loading-screen">
         <div class="welcome-content">
             <img src="QP_TM.png" alt="RNHS Logo" class="welcome-logo" onerror="this.src='https://via.placeholder.com/120?text=RNHS'">
             <div class="welcome-text">Welcome to Romblon National High School</div>
-            <div class="welcome-subtext">Quick Pass</div>
+            <div class="welcome-subtext">Introducing Quick Pass <br>by Co-Misyon</br></div>
             <div class="progress-container">
                 <div class="progress-bar"></div>
             </div>
         </div>
     </div>
 
-    <!-- Main Content Background -->
+
     <div class="animation-container">
         <div class="shape shape1"></div>
         <div class="shape shape2"></div>
     </div>
 
-    <!-- Auth Container -->
+
     <div class="container" id="portal-container">
         <div class="logo-container">
-            <img src="QP_TM.png" alt="RNHS Logo" onerror="this.src='https://via.placeholder.com/100?text=RNHS'">
+            <img src="quickpass_logo" alt="Quick Pass Logo" onerror="this.src='https://via.placeholder.com/100?text=Quick pass'">
         </div>
 
-        <h1 id="form-title">Student Portal Login</h1>
-        <p class="subtitle">Enter your credentials to continue</p>
+        <h1 id="form-title">Welcome Premierians</h1>
         
         <div id="auth-form" style="width: 100%;">
             <div class="input-group">
-                <input type="email" id="email" placeholder="Email Address">
+                <input type="email" id="email" placeholder="Email Address" spellcheck="false" autocomplete="email">
             </div>
             <div class="input-group">
-                <input type="password" id="password" placeholder="Password">
+                <input type="password" id="password" placeholder="Password" autocomplete="current-password">
             </div>
             
             <button id="login-btn">Sign In</button>
@@ -338,29 +352,26 @@
         </div>
 
         <div class="caution-text" id="toggle-area">
-            Don't have an account yet? <span class="toggle-link" onclick="toggleAuth()">Create account caution</span>
+            Don't have an account yet? <br>
+            <span class="toggle-link" onclick="toggleAuth()">Create account</span>
         </div>
     </div>
 
     <script>
-        // Use DOMContentLoaded instead of window.load for better reliability
         document.addEventListener('DOMContentLoaded', () => {
             const loader = document.getElementById('loading-screen');
             const portal = document.getElementById('portal-container');
 
-            // Force transition after 2.6 seconds (length of the progress bar animation)
             setTimeout(() => {
                 loader.classList.add('fade-out');
                 portal.classList.add('loaded');
                 
-                // Cleanup DOM after transition finishes
                 setTimeout(() => {
                     loader.style.display = 'none';
                 }, 800);
             }, 2600);
         });
 
-        // Supabase Initialization
         const supabaseUrl = 'https://qpzirlvpdlvewtuqlbjz.supabase.co';
         const supabaseKey = 'sb_publishable_6hxgL5FhVBTBaqT9mjJ95w_D2LCTLrv';
         
@@ -392,12 +403,12 @@
                 formTitle.innerText = "Student Portal Login";
                 loginBtn.classList.remove('hidden');
                 signupBtn.classList.add('hidden');
-                toggleArea.innerHTML = 'Don\'t have an account yet? <span class="toggle-link" onclick="toggleAuth()">Create account caution</span>';
+                toggleArea.innerHTML = 'Don\'t have an account yet? <br><span class="toggle-link" onclick="toggleAuth()">Create account caution</span>';
             } else {
                 formTitle.innerText = "Create Your Account";
                 loginBtn.classList.add('hidden');
                 signupBtn.classList.remove('hidden');
-                toggleArea.innerHTML = 'Already have an account? <span class="toggle-link" onclick="toggleAuth()">Sign In</span>';
+                toggleArea.innerHTML = 'Already have an account? <br><span class="toggle-link" onclick="toggleAuth()">Sign In</span>';
             }
         }
 
@@ -457,16 +468,18 @@
             }
         });
 
-        // Mouse Parallax Interaction
-        document.addEventListener('mousemove', (e) => {
-            const amount = 12;
-            const x = (e.clientX / window.innerWidth - 0.5) * amount;
-            const y = (e.clientY / window.innerHeight - 0.5) * amount;
-            const container = document.querySelector('.container');
-            if (container && container.classList.contains('loaded')) {
-                container.style.transform = `translate(${x}px, ${y}px)`;
-            }
-        });
+        // Parallax optimized for performance: only run if not on a touch device or use mouse events
+        if (window.matchMedia("(pointer: fine)").matches) {
+            document.addEventListener('mousemove', (e) => {
+                const amount = 8;
+                const x = (e.clientX / window.innerWidth - 0.5) * amount;
+                const y = (e.clientY / window.innerHeight - 0.5) * amount;
+                const container = document.querySelector('.container');
+                if (container && container.classList.contains('loaded')) {
+                    container.style.transform = `translate(${x}px, ${y}px)`;
+                }
+            });
+        }
     </script>
 </body>
 </html>
