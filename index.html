@@ -191,7 +191,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* 8:2 (4:1) Ratio Logo for Portal Container */
+        /* 8:2 (4:1) Ratio Logo Base Style */
         .logo-container {
             width: 180px;
             height: 45px;
@@ -206,6 +206,14 @@
             width: 100%; 
             height: 100%; 
             object-fit: contain; 
+        }
+
+        /* Secondary Logo inside Form */
+        .form-logo {
+            width: 140px;
+            height: 35px;
+            margin: 0 auto 20px auto;
+            opacity: 0.8;
         }
 
         h1 {
@@ -320,7 +328,7 @@
     <div id="loading-screen">
         <div class="welcome-content">
             <!-- 8:2 Ratio Placeholder -->
-            <img src="quickpass_logo.png" alt="Quick Pass Logo" class="welcome-logo" onerror="this.src='https://placehold.co/800x200/ffffff/242B67?text=QUICK+PASS'">
+            <img src="quickpass_logo_horizontal.png" alt="Quick Pass Logo" class="welcome-logo" onerror="this.src='https://placehold.co/800x200/ffffff/242B67?text=QUICK+PASS'">
             <div class="welcome-text">Welcome to Romblon National High School</div>
             <div class="welcome-subtext">Introducing Quick Pass <br>by Co-Misyon</div>
             <div class="progress-container">
@@ -335,14 +343,19 @@
     </div>
 
     <div class="container" id="portal-container">
-        <!-- 8:2 Ratio Placeholder -->
+        <!-- 8:2 Ratio Placeholder (Header) -->
         <div class="logo-container">
-            <img src="quickpass_logo_horizontal.png" alt="Quick Pass Logo" onerror="this.src='https://placehold.co/800x200/ffffff/242B67?text=QUICK+PASS'">
+            <img src="quickpass_logo.png" alt="Quick Pass Logo" onerror="this.src='https://placehold.co/800x200/ffffff/242B67?text=QUICK+PASS'">
         </div>
 
         <h1 id="form-title">Student Portal Login</h1>
         
         <div id="auth-form" style="width: 100%;">
+            <!-- 8:2 Ratio Placeholder (Inside Form) -->
+            <div class="logo-container form-logo">
+                <img src="quickpass_logo.png" alt="Quick Pass Logo" onerror="this.src='https://placehold.co/800x200/ffffff/242B67?text=QUICK+PASS'">
+            </div>
+
             <div class="input-group">
                 <input type="email" id="email" placeholder="Email Address" spellcheck="false" autocomplete="email">
             </div>
