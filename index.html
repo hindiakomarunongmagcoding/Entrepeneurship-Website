@@ -66,7 +66,6 @@
             50% { transform: scale(1.03); }
         }
 
-        /* 8:2 (4:1) Ratio Logo for Welcome Screen */
         .welcome-logo {
             width: 240px; 
             height: 60px;
@@ -191,7 +190,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* 8:2 (4:1) Ratio Logo Base Style */
         .logo-container {
             width: 180px;
             height: 45px;
@@ -206,14 +204,6 @@
             width: 100%; 
             height: 100%; 
             object-fit: contain; 
-        }
-
-        /* Secondary Logo inside Form */
-        .form-logo {
-            width: 140px;
-            height: 35px;
-            margin: 0 auto 20px auto;
-            opacity: 0.8;
         }
 
         h1 {
@@ -275,7 +265,10 @@
             transform: translateY(-1px);
         }
 
-        button:active { transform: translateY(0); scale: 0.98; }
+        button:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
+        }
 
         .caution-text {
             font-size: 13px;
@@ -313,21 +306,12 @@
             opacity: 0 !important;
             visibility: hidden !important;
         }
-
-        @media (max-width: 360px) {
-            .container { padding: 25px 18px; }
-            h1 { font-size: 19px; }
-            .welcome-text { font-size: 18px; }
-            .welcome-logo { width: 200px; height: 50px; }
-            .logo-container { width: 160px; height: 40px; }
-        }
     </style>
 </head>
 <body>
 
     <div id="loading-screen">
         <div class="welcome-content">
-            <!-- 8:2 Ratio Placeholder -->
             <img src="quickpass_logo.png" alt="Quick Pass Logo" class="welcome-logo" onerror="this.src='https://placehold.co/800x200/ffffff/242B67?text=QUICK+PASS'">
             <div class="welcome-text">Welcome to Romblon National High School</div>
             <div class="welcome-subtext">Introducing Quick Pass <br>by Co-Misyon</div>
@@ -343,7 +327,6 @@
     </div>
 
     <div class="container" id="portal-container">
-
         <div class="logo-container">
             <img src="quickpass_logo.png" alt="Quick Pass Logo" onerror="this.src='https://placehold.co/800x200/ffffff/242B67?text=QUICK+PASS'">
         </div>
@@ -351,7 +334,6 @@
         <h1 id="form-title">Student Portal Login</h1>
         
         <div id="auth-form" style="width: 100%;">
-
             <div class="input-group">
                 <input type="email" id="email" placeholder="Email Address" spellcheck="false" autocomplete="email">
             </div>
@@ -372,30 +354,20 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const loader = document.getElementById('loading-screen');
-            const portal = document.getElementById('portal-container');
-
-            setTimeout(() => {
-                loader.classList.add('fade-out');
-                portal.classList.add('loaded');
-                
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                }, 800);
-            }, 2600);
-        });
 
         const supabaseUrl = 'https://qpzirlvpdlvewtuqlbjz.supabase.co';
         const supabaseKey = 'sb_publishable_6hxgL5FhVBTBaqT9mjJ95w_D2LCTLrv';
-        
         let supabaseClient;
+        
         try {
             supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
         } catch (e) {
             console.error("Supabase Initialization Error:", e);
         }
 
+
+        const loader = document.getElementById('loading-screen');
+        const portal = document.getElementById('portal-container');
         const messageElement = document.getElementById('message');
         const loginBtn = document.getElementById('login-btn');
         const signupBtn = document.getElementById('signup-btn');
@@ -403,6 +375,24 @@
         const toggleArea = document.getElementById('toggle-area');
 
         let isLogin = true;
+
+
+        document.addEventListener('DOMContentLoaded', async () => {
+       
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+
+                window.location.href = 'home.html';
+                return;
+            }
+
+            // Welcome Screen Animation
+            setTimeout(() => {
+                loader.classList.add('fade-out');
+                portal.classList.add('loaded');
+                setTimeout(() => { loader.style.display = 'none'; }, 800);
+            }, 2600);
+        });
 
         function showStatus(text, type) {
             messageElement.innerText = text;
@@ -426,6 +416,7 @@
             }
         }
 
+        // Login Logic
         loginBtn.addEventListener('click', async (e) => {
             e.preventDefault();
             if (!supabaseClient) return showStatus("Database connection error.", "error");
@@ -445,19 +436,22 @@
                     loginBtn.innerText = "Sign In";
                     loginBtn.disabled = false;
                 } else {
-                    showStatus("Authenticated! Loading dashboard...", "success");
+                    showStatus("Authenticated! Redirecting...", "success");
+                    // REDIRECT TO HOME PAGE
+                    setTimeout(() => {
+                        window.location.href = 'home.html';
+                    }, 1000);
                 }
             } catch (err) {
-                showStatus("Network Error. Check your connection.", "error");
+                showStatus("Network Error.", "error");
                 loginBtn.innerText = "Sign In";
                 loginBtn.disabled = false;
             }
         });
 
+        // Signup Logic
         signupBtn.addEventListener('click', async (e) => {
             e.preventDefault();
-            if (!supabaseClient) return showStatus("Database connection error.", "error");
-
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
@@ -473,27 +467,14 @@
                     signupBtn.innerText = "Create Account";
                     signupBtn.disabled = false;
                 } else {
-                    showStatus("Success! Check your email for a link.", "success");
+                    showStatus("Success! Check your email for a verification link.", "success");
                 }
             } catch (err) {
-                showStatus("Network Error. Check your connection.", "error");
+                showStatus("Network Error.", "error");
                 signupBtn.innerText = "Create Account";
                 signupBtn.disabled = false;
             }
         });
-
-        if (window.matchMedia("(pointer: fine)").matches) {
-            document.addEventListener('mousemove', (e) => {
-                const amount = 8;
-                const x = (e.clientX / window.innerWidth - 0.5) * amount;
-                const y = (e.clientY / window.innerHeight - 0.5) * amount;
-                const container = document.querySelector('.container');
-                if (container && container.classList.contains('loaded')) {
-                    container.style.transform = `translate(${x}px, ${y}px)`;
-                }
-            });
-        }
     </script>
 </body>
 </html>
-
