@@ -341,18 +341,19 @@
 
         <h1 id="form-title">Advisers' Portal Login</h1>
         
-        <div id="auth-form" style="width: 100%;">
+        <!-- Changed to a form element so pressing 'Enter' submits the login -->
+        <form id="auth-form" style="width: 100%;">
             <div class="input-group">
-                <input type="email" id="email" placeholder="Email Address" spellcheck="false" autocomplete="email">
+                <input type="email" id="email" placeholder="Email Address" spellcheck="false" autocomplete="email" required>
             </div>
             <div class="input-group">
-                <input type="password" id="password" placeholder="Password" autocomplete="current-password">
+                <input type="password" id="password" placeholder="Password" autocomplete="current-password" required>
             </div>
             
-            <button id="login-btn">Sign In</button>
+            <button type="submit" id="login-btn">Sign In</button>
             
             <p id="message" class="status-msg hidden"></p>
-        </div>
+        </form>
 
         <div class="caution-text" id="toggle-area">
             Are you an admin? <br>
@@ -361,14 +362,11 @@
     </div>
 
     <script>
-        // Separate configurations for Adviser and Admin Supabase projects
         const adviserConfig = {
             url: 'https://qpzirlvpdlvewtuqlbjz.supabase.co',
             key: 'sb_publishable_6hxgL5FhVBTBaqT9mjJ95w_D2LCTLrv'
         };
         
-        // IMPORTANT: REPLACE THESE WITH YOUR ADMIN PROJECT CREDENTIALS
-        // Note: Using a properly formatted URL so the URL parser doesn't crash during testing
         const adminConfig = {
             url: 'https://dwablbdbbdgddnfduagc.supabase.co',
             key: 'sb_publishable_pGABAwv7L2dMPS77PHJ5NA_kjalL6yn'
@@ -376,16 +374,19 @@
 
         let adviserClient, adminClient;
         
-        // Initialize Adviser Client
+        // CRITICAL FIX: Add distinct storageKeys so the two sessions don't overwrite each other in localStorage
         try {
-            adviserClient = supabase.createClient(adviserConfig.url, adviserConfig.key);
+            adviserClient = supabase.createClient(adviserConfig.url, adviserConfig.key, {
+                auth: { storageKey: 'quickpass-adviser-token' }
+            });
         } catch (e) {
             console.error("Adviser Supabase Initialization Error:", e);
         }
 
-        // Initialize Admin Client (separated so if the URL is a placeholder, it doesn't break the adviser logic)
         try {
-            adminClient = supabase.createClient(adminConfig.url, adminConfig.key);
+            adminClient = supabase.createClient(adminConfig.url, adminConfig.key, {
+                auth: { storageKey: 'quickpass-admin-token' }
+            });
         } catch (e) {
             console.warn("Admin Supabase Initialization Skipped:", e.message);
         }
@@ -396,38 +397,43 @@
         const loginBtn = document.getElementById('login-btn');
         const formTitle = document.getElementById('form-title');
         const toggleArea = document.getElementById('toggle-area');
+        const authForm = document.getElementById('auth-form');
 
-        // State to track which portal is currently active
         let isAdviserMode = true;
 
         document.addEventListener('DOMContentLoaded', async () => {
-            // Check session for Advisers (Only if the client successfully initialized)
+            let isAlreadyLoggedIn = false;
+
+            // Check session for Advisers
             if (adviserClient) {
                 try {
                     const { data: { session: advSession } } = await adviserClient.auth.getSession();
                     if (advSession) {
-                        window.location.href = 'index.html';
-                        return;
+                        window.location.href = 'login_adviser.html'; // Fixed redirect path
+                        isAlreadyLoggedIn = true;
                     }
                 } catch (e) {
                     console.error("Adviser session check failed:", e);
                 }
             }
             
-            // Check session for Admins (Only if the client successfully initialized)
-            if (adminClient) {
+            // Check session for Admins
+            if (adminClient && !isAlreadyLoggedIn) {
                 try {
                     const { data: { session: adminSession } } = await adminClient.auth.getSession();
                     if (adminSession) {
-                        window.location.href = 'index.html';
-                        return;
+                        window.location.href = 'login_admin.html'; // Fixed redirect path
+                        isAlreadyLoggedIn = true;
                     }
                 } catch (e) {
                     console.error("Admin session check failed:", e);
                 }
             }
 
-            // Welcome Screen Animation (+5 seconds added = 7600ms total)
+            // Stop loading animation early if we're redirecting to prevent users from waiting 7 seconds
+            if (isAlreadyLoggedIn) return;
+
+            // Welcome Screen Animation (7600ms total)
             setTimeout(() => {
                 loader.classList.add('fade-out');
                 portal.classList.add('loaded');
@@ -460,11 +466,10 @@
             }
         }
 
-        // Login Logic
-        loginBtn.addEventListener('click', async (e) => {
+        // Login Logic - Now listens to the form submission
+        authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // Select the appropriate Supabase client based on the current mode
             const activeClient = isAdviserMode ? adviserClient : adminClient;
             
             if (!activeClient) return showStatus("Database connection error or not configured.", "error");
@@ -489,9 +494,9 @@
                     // Route to different dashboard pages based on the selected mode
                     setTimeout(() => {
                         if (isAdviserMode) {
-                            window.location.href = 'login_adviser.html'; // Advisers' destination
+                            window.location.href = 'login_adviser.html'; 
                         } else {
-                            window.location.href = 'login_admin.html';   // Admins' destination
+                            window.location.href = 'login_admin.html';   
                         }
                     }, 1000);
                 }
@@ -504,5 +509,3 @@
     </script>
 </body>
 </html>
-
-
