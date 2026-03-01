@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Pass by Co-Misyon</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        montserrat: ['Montserrat', 'sans-serif'],
+                        poppins: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            margin: 0;
+            background-color: #0f172a;
+        }
+
+        /* Animated Background Shapes */
+        .animation-container {
+            background: #0f172a;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 100vw;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .shape1 {
+            position: absolute;
+            top: 42%;
+            left: 70%;
+            width: 25rem;
+            height: 25rem;
+            background: #10b981; /* Green */
+            border-radius: 24% 76% 77% 23% / 30% 30% 70% 70%;
+            filter: blur(6rem);
+            animation: shape1 20s infinite;
+        }
+
+        @keyframes shape1 {
+            0% { transform: translate(0, 0); border-radius: 24% 76% 77% 23% / 30% 30% 70% 70%; }
+            25% { transform: translate(-55%, -10%); border-radius: 28% 72% 81% 19% / 78% 25% 75% 22%; height: 50rem; width: 80rem; }
+            50% { transform: translate(-90%, -10%); border-radius: 60% 40% 0% 100% / 1% 74% 26% 99%; }
+            75% { transform: translate(-30%, -10%); border-radius: 0% 100% 100% 0% / 0% 100% 100% 0%; height: 30rem; width: 45rem; }
+            100% { transform: translate(0%, 0%); border-radius: 24% 76% 77% 23% / 30% 30% 70% 70%; }
+        }
+
+        .shape2 {
+            position: absolute;
+            top: 33%;
+            left: 40%;
+            width: 35rem;
+            height: 25rem;
+            background: #1e3a8a; /* Blue */
+            border-radius: 73% 27% 77% 23% / 53% 4% 96% 47%;
+            filter: blur(12rem);
+            animation: shape2 35s infinite;
+        }
+
+        @keyframes shape2 {
+            0% { transform: translate(0, 0); border-radius: 73% 27% 77% 23% / 53% 4% 96% 47%; }
+            25% { transform: translate(-55%, -55%); border-radius: 28% 72% 81% 19% / 78% 25% 75% 22%; height: 50rem; width: 50rem; }
+            50% { transform: translate(-70%, -70%); border-radius: 60% 40% 0% 100% / 1% 74% 26% 99%; }
+            75% { transform: translate(-30%, -30%); border-radius: 0% 100% 100% 0% / 0% 100% 100% 0%; }
+            100% { transform: translate(0%, 0%); border-radius: 73% 27% 77% 23% / 53% 4% 96% 47%; }
+        }
+
+        .shape3 {
+            position: absolute;
+            top: 20%;
+            left: 80%;
+            width: 25rem;
+            height: 25rem;
+            background: #ffffff; /* White */
+            border-radius: 70% 30% 80% 20% / 42% 25% 75% 58%;
+            filter: blur(14rem);
+            animation: shape3 35s infinite;
+        }
+
+        @keyframes shape3 {
+            0% { transform: translate(0, 0); border-radius: 70% 30% 80% 20% / 42% 25% 75% 58%; }
+            25% { transform: translate(-125%, -25%); border-radius: 28% 72% 81% 19% / 78% 25% 75% 22%; height: 50rem; width: 50rem; }
+            50% { transform: translate(-90%, -35%); border-radius: 60% 40% 0% 100% / 1% 74% 26% 99%; }
+            75% { transform: translate(-30%, -40%); border-radius: 0% 100% 100% 0% / 0% 100% 100% 0%; }
+            100% { transform: translate(0%, 0%); border-radius: 70% 30% 80% 20% / 42% 25% 75% 58%; }
+        }
+
+        .shape4 {
+            position: absolute;
+            top: 42%;
+            left: 70%;
+            width: 25rem;
+            height: 25rem;
+            background: rgba(16, 185, 129, 0.7);
+            border-radius: 24% 76% 77% 23% / 30% 30% 70% 70%;
+            filter: blur(5rem);
+        }
+
+        .shape5 {
+            position: absolute;
+            top: 33%;
+            left: 40%;
+            width: 35rem;
+            height: 25rem;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 73% 27% 77% 23% / 53% 4% 96% 47%;
+            filter: blur(5rem);
+        }
+
+        .shape6 {
+            position: absolute;
+            top: 20%;
+            left: 80%;
+            width: 25rem;
+            height: 25rem;
+            background: rgba(30, 58, 138, 0.7);
+            border-radius: 70% 30% 80% 20% / 42% 25% 75% 58%;
+            filter: blur(5rem);
+        }
+
+        /* Glassmorphism Utilities */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .glass-btn {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 10px; }
+    </style>
+</head>
+<body onload="checkAdmin()" class="min-h-screen text-white font-poppins antialiased overflow-x-hidden selection:bg-green-500 selection:text-white">
+
+    <!-- Animated Background Container -->
+    <div class="animation-container">
+        <div class="shape1"></div>
+        <div class="shape2"></div>
+        <div class="shape3"></div>
+        <div class="shape4"></div>
+        <div class="shape5"></div>
+        <div class="shape6"></div>
+    </div>
+
+    <!-- Header / Nav -->
+    <header>
+        <nav class="glass-nav fixed top-4 left-0 right-0 max-w-[calc(100%-2rem)] md:max-w-md mx-auto z-40 transition-all duration-300 rounded-2xl px-5 py-3 flex justify-between items-center shadow-lg">
+            <h1 class="font-montserrat font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-white text-sm tracking-widest uppercase">
+                Admin Dashboard
+            </h1>
+            
+        </nav>
+    </header>
+
+
+    <main class="container pt-28 pb-10 px-5 max-w-md mx-auto flex flex-col gap-8">
+        
+        <section class="glass-panel rounded-3xl p-6 relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-green-500/20 rounded-full blur-2xl"></div>
+            
+            <h2 class="font-montserrat text-2xl font-bold mb-2 text-center text-transparent bg-clip-text bg-gradient-to-r from-white to-green-300">
+                Admin Dashboard
+            </h2>
+            <h3 class="text-sm text-center text-white/70 mb-6 uppercase tracking-widest">Student Messages</h3>
+            
+            <!-- Message List -->
+            <div id="messageList" class="flex flex-col gap-4 mb-8">
+                <!-- Example Message Card -->
+                <div class="card glass-panel rounded-2xl p-5 hover:bg-white/5 transition-colors border border-white/10 shadow-lg">
+                    <div class="flex justify-between items-start border-b border-white/10 pb-3 mb-3">
+                        <strong class="font-montserrat text-sm text-green-300 block">Juan Dela Cruz</strong>
+                        <p class="text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-full bg-yellow-500/20 border border-yellow-500/30 text-yellow-300">Pending</p>
+                    </div>
+                    <p class="text-sm text-white/80 leading-relaxed font-light mb-4">Good morning Principal, I would like to inquire regarding the upcoming foundation day activities.</p>
+                    
+                    <div class="flex gap-2">
+                        <button class="bg-white/10 hover:bg-white/20 text-xs py-2 px-4 rounded-lg transition-colors border border-white/10 flex-1">Mark Read</button>
+                        <button class="bg-green-500/20 hover:bg-green-500/40 text-green-300 text-xs py-2 px-4 rounded-lg transition-colors border border-green-500/30 flex-1">Reply</button>
+                    </div>
+                </div>
+                
+                <!-- Another Example -->
+                <div class="card glass-panel rounded-2xl p-5 hover:bg-white/5 transition-colors border border-white/10 shadow-lg">
+                    <div class="flex justify-between items-start border-b border-white/10 pb-3 mb-3">
+                        <strong class="font-montserrat text-sm text-green-300 block">Maria Santos</strong>
+                        <p class="text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-full bg-blue-500/20 border border-blue-500/30 text-blue-300">Reviewed</p>
+                    </div>
+                    <p class="text-sm text-white/80 leading-relaxed font-light">Message content regarding my lost ID card inside the campus library.</p>
+                </div>
+            </div>
+
+            <!-- Prominent Logout Button at bottom as requested -->
+            <button onclick="logout(event)" class="glass-btn w-full py-3.5 rounded-xl font-montserrat font-bold tracking-wide hover:bg-red-500/30 hover:border-red-400 active:scale-95 transition-all duration-300 text-sm flex justify-center items-center gap-2 group text-white">
+                <span class="group-hover:text-red-300 transition-colors">Logout of Dashboard</span>
+                <img src="https://via.placeholder.com/16/ffffff/0f172a?text=X" alt="Logout Icon" class="w-4 h-4 rounded-sm opacity-80 group-hover:opacity-100 transition-opacity">
+            </button>
+        </section>
+
+    </main>
+
+    <!-- JavaScript logic -->
+    <script>
+        function checkAdmin() {
+            console.log("Checking admin authentication...");
+            // Logic for checking admin privileges would go here
+        }
+
+        function logout(event) {
+            if(event) event.preventDefault();
+            console.log("Admin logging out...");
+            // Redirect to login page
+            window.location.href = 'login_admin.html';
+        }
+    </script>
+</body>
+</html>
