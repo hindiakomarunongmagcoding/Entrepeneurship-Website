@@ -179,7 +179,6 @@
         <div class="shape6"></div>
     </div>
 
-    <!-- Custom Toast Notification -->
     <div id="toast" class="fixed top-24 left-1/2 transform -translate-x-1/2 -translate-y-10 opacity-0 px-6 py-3 rounded-full text-white font-semibold text-sm shadow-xl z-50 transition-all duration-300 pointer-events-none text-center min-w-[200px]">
         Message
     </div>
@@ -192,7 +191,6 @@
             
             <a href="#" onclick="logout(event)" class="logout-btn flex items-center gap-2 group touch-manipulation">
                 <span class="text-xs font-semibold text-white/80 group-hover:text-red-300 transition-colors">Logout</span>
-                <!-- Updated Icon visual -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white/80 group-hover:text-red-300 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                     <polyline points="16 17 21 12 16 7"></polyline>
@@ -211,7 +209,6 @@
                 Send Message to Principal
             </h2>
             
-            <!-- Added Name and Section Inputs -->
             <div class="flex flex-col sm:flex-row gap-3 mb-3">
                 <input type="text" id="senderName" class="flex-1 bg-white/5 border border-white/20 rounded-xl p-3.5 text-white placeholder-white/40 focus:outline-none focus:border-green-400 focus:bg-white/10 transition-all duration-300 text-sm shadow-inner" placeholder="Your Full Name">
                 <input type="text" id="senderSection" class="w-full sm:w-1/3 bg-white/5 border border-white/20 rounded-xl p-3.5 text-white placeholder-white/40 focus:outline-none focus:border-green-400 focus:bg-white/10 transition-all duration-300 text-sm shadow-inner" placeholder="Section">
@@ -232,8 +229,7 @@
             <h3 class="font-montserrat text-lg font-bold mb-4 pl-3 border-l-4 border-blue-400">Your Messages</h3>
             
             <div id="studentMessages" class="flex flex-col gap-4">
-                <!-- Messages will load dynamically here -->
-            </div>
+                </div>
         </section>
 
     </main>
@@ -260,11 +256,12 @@
 
         function checkLogin() {
             console.log("Checking login status...");
-            // Logic for checking authentication
-            const isLoggedIn = sessionStorage.getItem('isLoggedIn') !== 'false';
+            // STRICT CHECK: Only stay on this page if it exactly equals the string 'true'
+            const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
+            
             if (!isLoggedIn) {
-                // In a real app, you'd immediately redirect to login.html here
-                console.log("User is not logged in.");
+                console.log("User is not logged in. Redirecting to login...");
+                window.location.href = 'index.html';
             }
         }
 
@@ -312,14 +309,13 @@
             event.preventDefault();
             console.log("Logging out...");
             
-            // 1. Clear local/session storage to actually invalidate the session
-            // Don't clear localStorage completely otherwise messages delete!
-            sessionStorage.setItem('isLoggedIn', 'false');
+            // 1. Completely REMOVE the item rather than setting it to 'false'
+            sessionStorage.removeItem('isLoggedIn');
 
             // 2. Show feedback
             showMessage("Logging out safely...", false);
             
-            // 3. Optional: Fade out main content for effect
+            // 3. Fade out main content for effect
             document.getElementById('mainContent').style.opacity = '0';
 
             // 4. Redirect to actual login page after a short delay
