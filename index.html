@@ -415,7 +415,7 @@
                     try {
                         const { data: { session: advSession } } = await adviserClient.auth.getSession();
                         if (advSession) {
-                            window.location.href = 'adviser.html'; // Points correctly to adviser.html
+                            window.location.href = 'index.html'; // Points correctly to adviser.html
                             isAlreadyLoggedIn = true;
                         }
                     } catch (e) {
@@ -428,7 +428,7 @@
                     try {
                         const { data: { session: adminSession } } = await adminClient.auth.getSession();
                         if (adminSession) {
-                            window.location.href = 'admin.html'; // Points correctly to admin.html
+                            window.location.href = 'index.html'; // Points correctly to admin.html
                             isAlreadyLoggedIn = true;
                         }
                     } catch (e) {
@@ -519,4 +519,5 @@
     </script>
 </body>
 </html>
+
 
