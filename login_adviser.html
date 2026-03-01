@@ -134,7 +134,6 @@
             filter: blur(5rem);
         }
 
-        /* Glassmorphism Utilities */
         .glass-panel {
             background: rgba(15, 23, 42, 0.4);
             backdrop-filter: blur(12px);
@@ -179,7 +178,6 @@
         <div class="shape6"></div>
     </div>
 
-    <!-- Custom Toast Notification -->
     <div id="toast" class="fixed top-24 left-1/2 transform -translate-x-1/2 -translate-y-10 opacity-0 px-6 py-3 rounded-full text-white font-semibold text-sm shadow-xl z-50 transition-all duration-300 pointer-events-none text-center min-w-[200px]">
         Message
     </div>
@@ -230,7 +228,6 @@
             <h3 class="font-montserrat text-lg font-bold mb-4 pl-3 border-l-4 border-blue-400">Your Messages</h3>
             
             <div id="studentMessages" class="flex flex-col gap-4">
-                <!-- Messages will load dynamically here -->
             </div>
         </section>
 
@@ -339,7 +336,6 @@
             showMessage("Message sent successfully!", false);
         }
 
-        // Live Cross-Tab Sync
         window.addEventListener('storage', function(e) {
             if (e.key === 'messages') {
                 loadStudentMessages();
@@ -348,3 +344,4 @@
     </script>
 </body>
 </html>
+
