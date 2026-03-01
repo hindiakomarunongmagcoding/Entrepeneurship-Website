@@ -111,7 +111,7 @@
             width: 0%;
             background: linear-gradient(90deg, var(--primary-blue), var(--primary-green));
             border-radius: 10px;
-            animation: loadProgress 2.5s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+            animation: loadProgress 7.5s cubic-bezier(0.65, 0, 0.35, 1) forwards;
         }
 
         @keyframes loadProgress {
@@ -213,6 +213,7 @@
             margin-bottom: 6px;
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
+            transition: color 0.3s ease;
         }
 
         .subtitle {
@@ -253,21 +254,23 @@
             color: white;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 8px 15px -3px rgba(41, 206, 82, 0.25);
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
         button:hover {
-            background-color: #1d5752;
+            filter: brightness(0.9);
             transform: translateY(-1px);
         }
 
         button:disabled {
-            background-color: #94a3b8;
+            background-color: #94a3b8 !important;
             cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
         }
 
         .caution-text {
@@ -285,6 +288,11 @@
             text-decoration: none;
             display: inline-block;
             margin-top: 4px;
+            transition: color 0.3s ease;
+        }
+
+        .toggle-link:hover {
+            color: var(--dark-blue);
         }
 
         .status-msg {
@@ -331,7 +339,7 @@
             <img src="quickpass_logo.png" alt="Quick Pass Logo" onerror="this.src='https://placehold.co/800x200/ffffff/242B67?text=QUICK+PASS'">
         </div>
 
-        <h1 id="form-title">Student Portal Login</h1>
+        <h1 id="form-title">Advisers' Portal Login</h1>
         
         <div id="auth-form" style="width: 100%;">
             <div class="input-group">
@@ -342,56 +350,89 @@
             </div>
             
             <button id="login-btn">Sign In</button>
-            <button id="signup-btn" class="hidden" style="background-color: var(--dark-blue);">Create Account</button>
             
             <p id="message" class="status-msg hidden"></p>
         </div>
 
         <div class="caution-text" id="toggle-area">
-            Don't have an account yet? <br>
-            <span class="toggle-link" onclick="toggleAuth()">Create account</span>
+            Are you an admin? <br>
+            <span class="toggle-link" onclick="toggleAuth()">Log in as Admin</span>
         </div>
     </div>
 
     <script>
-
-        const supabaseUrl = 'https://qpzirlvpdlvewtuqlbjz.supabase.co';
-        const supabaseKey = 'sb_publishable_6hxgL5FhVBTBaqT9mjJ95w_D2LCTLrv';
-        let supabaseClient;
+        // Separate configurations for Adviser and Admin Supabase projects
+        const adviserConfig = {
+            url: 'https://qpzirlvpdlvewtuqlbjz.supabase.co',
+            key: 'sb_publishable_6hxgL5FhVBTBaqT9mjJ95w_D2LCTLrv'
+        };
         
+        // IMPORTANT: REPLACE THESE WITH YOUR ADMIN PROJECT CREDENTIALS
+        // Note: Using a properly formatted URL so the URL parser doesn't crash during testing
+        const adminConfig = {
+            url: 'https://dwablbdbbdgddnfduagc.supabase.co.co',
+            key: 'sb_publishable_pGABAwv7L2dMPS77PHJ5NA_kjalL6yn'
+        };
+
+        let adviserClient, adminClient;
+        
+        // Initialize Adviser Client
         try {
-            supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+            adviserClient = supabase.createClient(adviserConfig.url, adviserConfig.key);
         } catch (e) {
-            console.error("Supabase Initialization Error:", e);
+            console.error("Adviser Supabase Initialization Error:", e);
         }
 
+        // Initialize Admin Client (separated so if the URL is a placeholder, it doesn't break the adviser logic)
+        try {
+            adminClient = supabase.createClient(adminConfig.url, adminConfig.key);
+        } catch (e) {
+            console.warn("Admin Supabase Initialization Skipped:", e.message);
+        }
 
         const loader = document.getElementById('loading-screen');
         const portal = document.getElementById('portal-container');
         const messageElement = document.getElementById('message');
         const loginBtn = document.getElementById('login-btn');
-        const signupBtn = document.getElementById('signup-btn');
         const formTitle = document.getElementById('form-title');
         const toggleArea = document.getElementById('toggle-area');
 
-        let isLogin = true;
-
+        // State to track which portal is currently active
+        let isAdviserMode = true;
 
         document.addEventListener('DOMContentLoaded', async () => {
-       
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (session) {
-
-                window.location.href = 'login_adviser.html';
-                return;
+            // Check session for Advisers (Only if the client successfully initialized)
+            if (adviserClient) {
+                try {
+                    const { data: { session: advSession } } = await adviserClient.auth.getSession();
+                    if (advSession) {
+                        window.location.href = 'adviser_dashboard.html';
+                        return;
+                    }
+                } catch (e) {
+                    console.error("Adviser session check failed:", e);
+                }
+            }
+            
+            // Check session for Admins (Only if the client successfully initialized)
+            if (adminClient) {
+                try {
+                    const { data: { session: adminSession } } = await adminClient.auth.getSession();
+                    if (adminSession) {
+                        window.location.href = 'admin_dashboard.html';
+                        return;
+                    }
+                } catch (e) {
+                    console.error("Admin session check failed:", e);
+                }
             }
 
-            // Welcome Screen Animation
+            // Welcome Screen Animation (+5 seconds added = 7600ms total)
             setTimeout(() => {
                 loader.classList.add('fade-out');
                 portal.classList.add('loaded');
                 setTimeout(() => { loader.style.display = 'none'; }, 800);
-            }, 2600);
+            }, 7600);
         });
 
         function showStatus(text, type) {
@@ -401,25 +442,32 @@
         }
 
         function toggleAuth() {
-            isLogin = !isLogin;
+            isAdviserMode = !isAdviserMode;
             messageElement.classList.add('hidden');
-            if (isLogin) {
-                formTitle.innerText = "Student Portal Login";
-                loginBtn.classList.remove('hidden');
-                signupBtn.classList.add('hidden');
-                toggleArea.innerHTML = 'Don\'t have an account yet? <br><span class="toggle-link" onclick="toggleAuth()">Create account</span>';
+            
+            // Clear input fields when toggling
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
+
+            if (isAdviserMode) {
+                formTitle.innerText = "Advisers' Portal Login";
+                loginBtn.style.backgroundColor = "var(--primary-green)";
+                toggleArea.innerHTML = 'Are you an admin? <br><span class="toggle-link" onclick="toggleAuth()">Log in as Admin</span>';
             } else {
-                formTitle.innerText = "Create Your Account";
-                loginBtn.classList.add('hidden');
-                signupBtn.classList.remove('hidden');
-                toggleArea.innerHTML = 'Already have an account? <br><span class="toggle-link" onclick="toggleAuth()">Sign In</span>';
+                formTitle.innerText = "Admin Portal Login";
+                loginBtn.style.backgroundColor = "var(--dark-blue)";
+                toggleArea.innerHTML = 'Are you an adviser? <br><span class="toggle-link" onclick="toggleAuth()">Log in as Adviser</span>';
             }
         }
 
         // Login Logic
         loginBtn.addEventListener('click', async (e) => {
             e.preventDefault();
-            if (!supabaseClient) return showStatus("Database connection error.", "error");
+            
+            // Select the appropriate Supabase client based on the current mode
+            const activeClient = isAdviserMode ? adviserClient : adminClient;
+            
+            if (!activeClient) return showStatus("Database connection error or not configured.", "error");
 
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
@@ -430,16 +478,21 @@
             loginBtn.disabled = true;
 
             try {
-                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+                const { data, error } = await activeClient.auth.signInWithPassword({ email, password });
                 if (error) {
                     showStatus(error.message, "error");
                     loginBtn.innerText = "Sign In";
                     loginBtn.disabled = false;
                 } else {
                     showStatus("Authenticated! Redirecting...", "success");
-                    // REDIRECT TO HOME PAGE
+                    
+                    // Route to different dashboard pages based on the selected mode
                     setTimeout(() => {
-                        window.location.href = 'login_adviser.html';
+                        if (isAdviserMode) {
+                            window.location.href = 'login_adviser.html'; // Advisers' destination
+                        } else {
+                            window.location.href = 'login_admin.html';   // Admins' destination
+                        }
                     }, 1000);
                 }
             } catch (err) {
@@ -448,35 +501,6 @@
                 loginBtn.disabled = false;
             }
         });
-
-        // Signup Logic
-        signupBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-
-            if (!email || !password) return showStatus("Please fill in all fields.", "error");
-
-            signupBtn.innerText = "Registering...";
-            signupBtn.disabled = true;
-
-            try {
-                const { data, error } = await supabaseClient.auth.signUp({ email, password });
-                if (error) {
-                    showStatus(error.message, "error");
-                    signupBtn.innerText = "Create Account";
-                    signupBtn.disabled = false;
-                } else {
-                    showStatus("Success! Check your email for a verification link.", "success");
-                }
-            } catch (err) {
-                showStatus("Network Error.", "error");
-                signupBtn.innerText = "Create Account";
-                signupBtn.disabled = false;
-            }
-        });
     </script>
 </body>
 </html>
-
-
