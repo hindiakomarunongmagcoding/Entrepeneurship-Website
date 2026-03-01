@@ -404,29 +404,36 @@
         document.addEventListener('DOMContentLoaded', async () => {
             let isAlreadyLoggedIn = false;
 
-            // Check session for Advisers
-            if (adviserClient) {
-                try {
-                    const { data: { session: advSession } } = await adviserClient.auth.getSession();
-                    if (advSession) {
-                        window.location.href = 'login_adviser.html'; // Fixed redirect path
-                        isAlreadyLoggedIn = true;
+            // FIX: If user just logged out from the portal (sessionStorage flag is false), completely sign them out of Supabase to break the infinite reload loop.
+            if (sessionStorage.getItem('isLoggedIn') === 'false') {
+                if (adviserClient) await adviserClient.auth.signOut();
+                if (adminClient) await adminClient.auth.signOut();
+                sessionStorage.removeItem('isLoggedIn'); // Reset the flag so they can log in normally again
+            } else {
+                // Check session for Advisers
+                if (adviserClient) {
+                    try {
+                        const { data: { session: advSession } } = await adviserClient.auth.getSession();
+                        if (advSession) {
+                            window.location.href = 'adviser.html'; // Points correctly to adviser.html
+                            isAlreadyLoggedIn = true;
+                        }
+                    } catch (e) {
+                        console.error("Adviser session check failed:", e);
                     }
-                } catch (e) {
-                    console.error("Adviser session check failed:", e);
                 }
-            }
-            
-            // Check session for Admins
-            if (adminClient && !isAlreadyLoggedIn) {
-                try {
-                    const { data: { session: adminSession } } = await adminClient.auth.getSession();
-                    if (adminSession) {
-                        window.location.href = 'login_admin.html'; // Fixed redirect path
-                        isAlreadyLoggedIn = true;
+                
+                // Check session for Admins
+                if (adminClient && !isAlreadyLoggedIn) {
+                    try {
+                        const { data: { session: adminSession } } = await adminClient.auth.getSession();
+                        if (adminSession) {
+                            window.location.href = 'admin.html'; // Points correctly to admin.html
+                            isAlreadyLoggedIn = true;
+                        }
+                    } catch (e) {
+                        console.error("Admin session check failed:", e);
                     }
-                } catch (e) {
-                    console.error("Admin session check failed:", e);
                 }
             }
 
@@ -491,12 +498,15 @@
                 } else {
                     showStatus("Authenticated! Redirecting...", "success");
                     
+                    // Mark as explicitly logged in for the dashboards
+                    sessionStorage.setItem('isLoggedIn', 'true');
+                    
                     // Route to different dashboard pages based on the selected mode
                     setTimeout(() => {
                         if (isAdviserMode) {
-                            window.location.href = 'login_adviser.html'; 
+                            window.location.href = 'adviser.html'; 
                         } else {
-                            window.location.href = 'login_admin.html';   
+                            window.location.href = 'admin.html';   
                         }
                     }, 1000);
                 }
