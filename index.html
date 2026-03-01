@@ -415,7 +415,8 @@
                     try {
                         const { data: { session: advSession } } = await adviserClient.auth.getSession();
                         if (advSession) {
-                            window.location.href = 'index.html'; // Points correctly to adviser.html
+                            // FIXED INFINITE REFRESH LOOP: Redirected to login_adviser.html instead of index.html
+                            window.location.href = 'login_adviser.html'; 
                             isAlreadyLoggedIn = true;
                         }
                     } catch (e) {
@@ -428,7 +429,8 @@
                     try {
                         const { data: { session: adminSession } } = await adminClient.auth.getSession();
                         if (adminSession) {
-                            window.location.href = 'index.html'; // Points correctly to admin.html
+                            // FIXED INFINITE REFRESH LOOP: Redirected to login_admin.html instead of index.html
+                            window.location.href = 'login_admin.html'; 
                             isAlreadyLoggedIn = true;
                         }
                     } catch (e) {
@@ -519,6 +521,3 @@
     </script>
 </body>
 </html>
-
-
-
