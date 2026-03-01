@@ -341,7 +341,6 @@
 
         <h1 id="form-title">Advisers' Portal Login</h1>
         
-        <!-- Changed to a form element so pressing 'Enter' submits the login -->
         <form id="auth-form" style="width: 100%;">
             <div class="input-group">
                 <input type="email" id="email" placeholder="Email Address" spellcheck="false" autocomplete="email" required>
@@ -374,7 +373,6 @@
 
         let adviserClient, adminClient;
         
-        // CRITICAL FIX: Add distinct storageKeys so the two sessions don't overwrite each other in localStorage
         try {
             adviserClient = supabase.createClient(adviserConfig.url, adviserConfig.key, {
                 auth: { storageKey: 'quickpass-adviser-token' }
@@ -404,18 +402,16 @@
         document.addEventListener('DOMContentLoaded', async () => {
             let isAlreadyLoggedIn = false;
 
-            // FIX: If user just logged out from the portal (sessionStorage flag is false), completely sign them out of Supabase to break the infinite reload loop.
             if (sessionStorage.getItem('isLoggedIn') === 'false') {
                 if (adviserClient) await adviserClient.auth.signOut();
                 if (adminClient) await adminClient.auth.signOut();
-                sessionStorage.removeItem('isLoggedIn'); // Reset the flag so they can log in normally again
+                sessionStorage.removeItem('isLoggedIn');
             } else {
-                // Check session for Advisers
                 if (adviserClient) {
                     try {
                         const { data: { session: advSession } } = await adviserClient.auth.getSession();
                         if (advSession) {
-                            // FIXED INFINITE REFRESH LOOP: Redirected to login_adviser.html instead of index.html
+
                             window.location.href = 'login_adviser.html'; 
                             isAlreadyLoggedIn = true;
                         }
@@ -424,12 +420,10 @@
                     }
                 }
                 
-                // Check session for Admins
                 if (adminClient && !isAlreadyLoggedIn) {
                     try {
                         const { data: { session: adminSession } } = await adminClient.auth.getSession();
                         if (adminSession) {
-                            // FIXED INFINITE REFRESH LOOP: Redirected to login_admin.html instead of index.html
                             window.location.href = 'login_admin.html'; 
                             isAlreadyLoggedIn = true;
                         }
@@ -439,10 +433,8 @@
                 }
             }
 
-            // Stop loading animation early if we're redirecting to prevent users from waiting 7 seconds
             if (isAlreadyLoggedIn) return;
 
-            // Welcome Screen Animation (7600ms total)
             setTimeout(() => {
                 loader.classList.add('fade-out');
                 portal.classList.add('loaded');
@@ -460,7 +452,6 @@
             isAdviserMode = !isAdviserMode;
             messageElement.classList.add('hidden');
             
-            // Clear input fields when toggling
             document.getElementById('email').value = '';
             document.getElementById('password').value = '';
 
@@ -475,7 +466,6 @@
             }
         }
 
-        // Login Logic - Now listens to the form submission
         authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -500,10 +490,8 @@
                 } else {
                     showStatus("Authenticated! Redirecting...", "success");
                     
-                    // Mark as explicitly logged in for the dashboards
                     sessionStorage.setItem('isLoggedIn', 'true');
                     
-                    // Route to different dashboard pages based on the selected mode
                     setTimeout(() => {
                         if (isAdviserMode) {
                             window.location.href = 'login_adviser.html'; 
@@ -521,3 +509,4 @@
     </script>
 </body>
 </html>
+
