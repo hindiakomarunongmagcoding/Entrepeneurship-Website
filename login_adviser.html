@@ -192,7 +192,6 @@
             
             <a href="#" onclick="logout(event)" class="logout-btn flex items-center gap-2 group touch-manipulation">
                 <span class="text-xs font-semibold text-white/80 group-hover:text-red-300 transition-colors">Logout</span>
-                <!-- Updated Icon visual -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white/80 group-hover:text-red-300 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                     <polyline points="16 17 21 12 16 7"></polyline>
@@ -211,7 +210,6 @@
                 Send Message to Principal
             </h2>
             
-            <!-- Added Name and Section Inputs -->
             <div class="flex flex-col sm:flex-row gap-3 mb-3">
                 <input type="text" id="senderName" class="flex-1 bg-white/5 border border-white/20 rounded-xl p-3.5 text-white placeholder-white/40 focus:outline-none focus:border-green-400 focus:bg-white/10 transition-all duration-300 text-sm shadow-inner" placeholder="Your Full Name">
                 <input type="text" id="senderSection" class="w-full sm:w-1/3 bg-white/5 border border-white/20 rounded-xl p-3.5 text-white placeholder-white/40 focus:outline-none focus:border-green-400 focus:bg-white/10 transition-all duration-300 text-sm shadow-inner" placeholder="Section">
@@ -239,19 +237,16 @@
     </main>
 
     <script>
-        // Custom Toast Notification Logic
         function showMessage(msg, isError = true) {
             const toast = document.getElementById('toast');
             toast.innerText = msg;
             
-            // Set colors based on success or error
             if (isError) {
                 toast.className = "fixed top-24 left-1/2 transform -translate-x-1/2 translate-y-0 opacity-100 px-6 py-3 rounded-full text-white font-semibold text-sm shadow-xl z-50 transition-all duration-300 pointer-events-none text-center min-w-[200px] bg-red-500 border border-red-400";
             } else {
                 toast.className = "fixed top-24 left-1/2 transform -translate-x-1/2 translate-y-0 opacity-100 px-6 py-3 rounded-full text-white font-semibold text-sm shadow-xl z-50 transition-all duration-300 pointer-events-none text-center min-w-[200px] bg-green-500 border border-green-400";
             }
 
-            // Hide after 3 seconds
             setTimeout(() => {
                 toast.classList.remove('opacity-100', 'translate-y-0');
                 toast.classList.add('opacity-0', '-translate-y-10');
@@ -259,18 +254,14 @@
         }
 
         function checkLogin() {
-            console.log("Checking login status...");
-            // Logic for checking authentication
             const isLoggedIn = sessionStorage.getItem('isLoggedIn') !== 'false';
             if (!isLoggedIn) {
-                // In a real app, you'd immediately redirect to login.html here
                 console.log("User is not logged in.");
             }
         }
 
         function loadStudentMessages() {
             const list = document.getElementById('studentMessages');
-            // Fetch messages from localStorage
             const messages = JSON.parse(localStorage.getItem('messages') || '[]');
             
             if (messages.length === 0) {
@@ -280,7 +271,6 @@
 
             list.innerHTML = '';
             
-            // Sort by ID to show newest first
             messages.sort((a, b) => b.id - a.id).forEach(msg => {
                 const card = document.createElement('div');
                 card.className = 'card glass-panel rounded-2xl p-5 hover:bg-white/5 transition-colors border border-white/10 shadow-lg';
@@ -310,19 +300,9 @@
 
         function logout(event) {
             event.preventDefault();
-            console.log("Logging out...");
-            
-            // 1. Clear local/session storage to actually invalidate the session
-            // Don't clear localStorage completely otherwise messages delete!
             sessionStorage.setItem('isLoggedIn', 'false');
-
-            // 2. Show feedback
             showMessage("Logging out safely...", false);
-            
-            // 3. Optional: Fade out main content for effect
             document.getElementById('mainContent').style.opacity = '0';
-
-            // 4. Redirect to actual login page after a short delay
             setTimeout(() => {
                 window.location.href = 'index.html'; 
             }, 800);
@@ -333,36 +313,38 @@
             const sectionBox = document.getElementById('senderSection');
             const msgBox = document.getElementById('message');
 
-            // Validation: Ensure all fields are filled
             if(nameBox.value.trim() === "" || sectionBox.value.trim() === "" || msgBox.value.trim() === "") {
                 showMessage("Please fill in your name, section, and message.", true);
                 return;
             }
 
-            // Create a new message object
             const newMsg = {
-                id: Date.now(), // Generate unique ID
+                id: Date.now(),
                 name: nameBox.value.trim(),
                 section: sectionBox.value.trim(),
                 text: msgBox.value.trim(),
                 status: 'Pending'
             };
 
-            // Retrieve existing messages, append new one, and save back to storage
             let messages = JSON.parse(localStorage.getItem('messages') || '[]');
             messages.push(newMsg);
             localStorage.setItem('messages', JSON.stringify(messages));
             
-            // Reload UI to show the new message
             loadStudentMessages();
             
-            // Clear all inputs
             nameBox.value = "";
             sectionBox.value = "";
             msgBox.value = "";
             
             showMessage("Message sent successfully!", false);
         }
+
+        // Live Cross-Tab Sync
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'messages') {
+                loadStudentMessages();
+            }
+        });
     </script>
 </body>
 </html>
