@@ -256,10 +256,11 @@
 
         function checkLogin() {
             console.log("Checking login status...");
-            // STRICT CHECK: Only stay on this page if it exactly equals the string 'true'
-            const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
+            // We check both storages just to be safe
+            const isLoggedInSession = sessionStorage.getItem('isLoggedIn') === 'true';
+            const isLoggedInLocal = localStorage.getItem('isLoggedIn') === 'true';
             
-            if (!isLoggedIn) {
+            if (!isLoggedInSession && !isLoggedInLocal) {
                 console.log("User is not logged in. Redirecting to login...");
                 window.location.href = 'index.html';
             }
@@ -309,16 +310,18 @@
             event.preventDefault();
             console.log("Logging out...");
             
-            // 1. Completely REMOVE the item rather than setting it to 'false'
+            // FIXED: We now clear BOTH sessionStorage and localStorage
+            // If index.html uses localStorage to verify login, this ensures it knows you are logged out.
             sessionStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('isLoggedIn');
 
-            // 2. Show feedback
+            // Show feedback
             showMessage("Logging out safely...", false);
             
-            // 3. Fade out main content for effect
+            // Fade out main content for effect
             document.getElementById('mainContent').style.opacity = '0';
 
-            // 4. Redirect to actual login page after a short delay
+            // Redirect to actual login page after a short delay
             setTimeout(() => {
                 window.location.href = 'index.html'; 
             }, 800);
