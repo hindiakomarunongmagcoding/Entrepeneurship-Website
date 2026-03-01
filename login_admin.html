@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quick Pass by Co-Misyon</title>
 
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
@@ -31,7 +30,6 @@
             background-color: #0f172a;
         }
 
-        /* Animated Background Shapes */
         .animation-container {
             background: #0f172a;
             position: fixed;
@@ -49,7 +47,7 @@
             left: 70%;
             width: 25rem;
             height: 25rem;
-            background: #10b981; /* Green */
+            background: #10b981;
             border-radius: 24% 76% 77% 23% / 30% 30% 70% 70%;
             filter: blur(6rem);
             animation: shape1 20s infinite;
@@ -69,7 +67,7 @@
             left: 40%;
             width: 35rem;
             height: 25rem;
-            background: #1e3a8a; /* Blue */
+            background: #1e3a8a;
             border-radius: 73% 27% 77% 23% / 53% 4% 96% 47%;
             filter: blur(12rem);
             animation: shape2 35s infinite;
@@ -89,7 +87,7 @@
             left: 80%;
             width: 25rem;
             height: 25rem;
-            background: #ffffff; /* White */
+            background: #ffffff;
             border-radius: 70% 30% 80% 20% / 42% 25% 75% 58%;
             filter: blur(14rem);
             animation: shape3 35s infinite;
@@ -136,7 +134,6 @@
             filter: blur(5rem);
         }
 
-        /* Glassmorphism Utilities */
         .glass-panel {
             background: rgba(15, 23, 42, 0.4);
             backdrop-filter: blur(12px);
@@ -194,7 +191,6 @@
             <h3 class="text-sm text-center text-white/70 mb-6 uppercase tracking-widest">Student Messages</h3>
             
             <div id="messageList" class="flex flex-col gap-4 mb-8">
-                <!-- Messages will be injected here by JavaScript dynamically -->
             </div>
 
             <button onclick="logout(event)" class="glass-btn w-full py-3.5 rounded-xl font-montserrat font-bold tracking-wide hover:bg-red-500/30 hover:border-red-400 active:scale-95 transition-all duration-300 text-sm flex justify-center items-center gap-2 group text-white">
@@ -277,7 +273,6 @@
             window.location.href = 'index.html';
         }
 
-        // Live Cross-Tab Sync
         window.addEventListener('storage', function(e) {
             if (e.key === 'messages') {
                 loadMessages();
