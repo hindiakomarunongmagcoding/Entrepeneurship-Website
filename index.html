@@ -406,7 +406,7 @@
                 try {
                     const { data: { session: advSession } } = await adviserClient.auth.getSession();
                     if (advSession) {
-                        window.location.href = 'adviser_dashboard.html';
+                        window.location.href = 'index.html';
                         return;
                     }
                 } catch (e) {
@@ -419,7 +419,7 @@
                 try {
                     const { data: { session: adminSession } } = await adminClient.auth.getSession();
                     if (adminSession) {
-                        window.location.href = 'admin_dashboard.html';
+                        window.location.href = 'index.html';
                         return;
                     }
                 } catch (e) {
@@ -504,4 +504,5 @@
     </script>
 </body>
 </html>
+
 
