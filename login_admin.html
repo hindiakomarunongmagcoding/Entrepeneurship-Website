@@ -187,7 +187,6 @@
         </nav>
     </header>
 
-
     <main class="container pt-28 pb-10 px-5 max-w-md mx-auto flex flex-col gap-8">
         
         <section class="glass-panel rounded-3xl p-6 relative overflow-hidden">
@@ -200,28 +199,7 @@
             
             <!-- Message List -->
             <div id="messageList" class="flex flex-col gap-4 mb-8">
-                <!-- Example Message Card -->
-                <div class="card glass-panel rounded-2xl p-5 hover:bg-white/5 transition-colors border border-white/10 shadow-lg">
-                    <div class="flex justify-between items-start border-b border-white/10 pb-3 mb-3">
-                        <strong class="font-montserrat text-sm text-green-300 block">Juan Dela Cruz</strong>
-                        <p class="text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-full bg-yellow-500/20 border border-yellow-500/30 text-yellow-300">Pending</p>
-                    </div>
-                    <p class="text-sm text-white/80 leading-relaxed font-light mb-4">Good morning Principal, I would like to inquire regarding the upcoming foundation day activities.</p>
-                    
-                    <div class="flex gap-2">
-                        <button class="bg-white/10 hover:bg-white/20 text-xs py-2 px-4 rounded-lg transition-colors border border-white/10 flex-1">Mark Read</button>
-                        <button class="bg-green-500/20 hover:bg-green-500/40 text-green-300 text-xs py-2 px-4 rounded-lg transition-colors border border-green-500/30 flex-1">Reply</button>
-                    </div>
-                </div>
-                
-                <!-- Another Example -->
-                <div class="card glass-panel rounded-2xl p-5 hover:bg-white/5 transition-colors border border-white/10 shadow-lg">
-                    <div class="flex justify-between items-start border-b border-white/10 pb-3 mb-3">
-                        <strong class="font-montserrat text-sm text-green-300 block">Maria Santos</strong>
-                        <p class="text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-full bg-blue-500/20 border border-blue-500/30 text-blue-300">Reviewed</p>
-                    </div>
-                    <p class="text-sm text-white/80 leading-relaxed font-light">Message content regarding my lost ID card inside the campus library.</p>
-                </div>
+                <!-- Messages will be injected here by JavaScript dynamically -->
             </div>
 
             <!-- Prominent Logout Button at bottom as requested -->
@@ -237,12 +215,75 @@
     <script>
         function checkAdmin() {
             console.log("Checking admin authentication...");
-            // Logic for checking admin privileges would go here
+            loadMessages(); // Load messages as soon as admin enters
+        }
+
+        function loadMessages() {
+            const messageList = document.getElementById('messageList');
+            const messages = JSON.parse(localStorage.getItem('messages') || '[]');
+            
+            if (messages.length === 0) {
+                messageList.innerHTML = '<p class="text-sm text-center text-white/50 py-4">No pending messages found.</p>';
+                return;
+            }
+
+            messageList.innerHTML = ''; // Clear current contents
+
+            // Sort newest first
+            messages.sort((a, b) => b.id - a.id).forEach(msg => {
+                const card = document.createElement('div');
+                card.className = 'card glass-panel rounded-2xl p-5 hover:bg-white/5 transition-colors border border-white/10 shadow-lg';
+                
+                let statusBadge = '';
+                let actionButtons = '';
+
+                if (msg.status === 'Pending') {
+                    statusBadge = `<p class="text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-full bg-yellow-500/20 border border-yellow-500/30 text-yellow-300 mt-1">Pending</p>`;
+                    actionButtons = `
+                    <div class="flex gap-2 mt-4">
+                        <button onclick="updateStatus(${msg.id}, 'Accepted')" class="bg-green-500/20 hover:bg-green-500/40 text-green-300 text-xs py-2 px-4 rounded-lg transition-colors border border-green-500/30 flex-1">Accept</button>
+                        <button onclick="updateStatus(${msg.id}, 'Rejected')" class="bg-red-500/20 hover:bg-red-500/40 text-red-300 text-xs py-2 px-4 rounded-lg transition-colors border border-red-500/30 flex-1">Reject</button>
+                    </div>`;
+                } else if (msg.status === 'Accepted') {
+                    statusBadge = `<p class="text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-full bg-green-500/20 border border-green-500/30 text-green-300 mt-1">Accepted</p>`;
+                } else {
+                    statusBadge = `<p class="text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-full bg-red-500/20 border border-red-500/30 text-red-300 mt-1">Rejected</p>`;
+                }
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start border-b border-white/10 pb-3 mb-3">
+                        <div>
+                            <strong class="font-montserrat text-sm text-green-300 block">${msg.name}</strong>
+                            <span class="text-xs text-white/50 block mt-1">Section: ${msg.section}</span>
+                        </div>
+                        ${statusBadge}
+                    </div>
+                    <p class="text-sm text-white/80 leading-relaxed font-light whitespace-pre-wrap">${msg.text}</p>
+                    ${actionButtons}
+                `;
+                
+                messageList.appendChild(card);
+            });
+        }
+
+        function updateStatus(id, newStatus) {
+            let messages = JSON.parse(localStorage.getItem('messages') || '[]');
+            const index = messages.findIndex(m => m.id === id);
+            
+            if (index !== -1) {
+                messages[index].status = newStatus; // Update status
+                localStorage.setItem('messages', JSON.stringify(messages)); // Save back to storage
+                loadMessages(); // Re-render the list immediately
+            }
         }
 
         function logout(event) {
             if(event) event.preventDefault();
             console.log("Admin logging out...");
+            
+            // Clear session storage to properly mark the user as logged out
+            sessionStorage.setItem('isLoggedIn', 'false');
+            
             // Redirect to login page
             window.location.href = 'index.html';
         }
