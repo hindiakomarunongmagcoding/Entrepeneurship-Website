@@ -167,7 +167,6 @@
 </head>
 <body onload="checkAdmin()" class="min-h-screen text-white font-poppins antialiased overflow-x-hidden selection:bg-green-500 selection:text-white">
 
-    <!-- Animated Background Container -->
     <div class="animation-container">
         <div class="shape1"></div>
         <div class="shape2"></div>
@@ -177,45 +176,41 @@
         <div class="shape6"></div>
     </div>
 
-    <!-- Header / Nav -->
     <header>
         <nav class="glass-nav fixed top-4 left-0 right-0 max-w-[calc(100%-2rem)] md:max-w-md mx-auto z-40 transition-all duration-300 rounded-2xl px-5 py-3 flex justify-between items-center shadow-lg">
-            <h1 class="font-montserrat font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-white text-sm tracking-widest uppercase">
+            <h1 class="font-montserrat font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-white text-sm tracking-widest uppercase">
                 Admin Dashboard
             </h1>
-            
         </nav>
     </header>
 
     <main class="container pt-28 pb-10 px-5 max-w-md mx-auto flex flex-col gap-8">
-        
         <section class="glass-panel rounded-3xl p-6 relative overflow-hidden">
-            <div class="absolute -top-10 -right-10 w-32 h-32 bg-green-500/20 rounded-full blur-2xl"></div>
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/20 rounded-full blur-2xl"></div>
             
-            <h2 class="font-montserrat text-2xl font-bold mb-2 text-center text-transparent bg-clip-text bg-gradient-to-r from-white to-green-300">
+            <h2 class="font-montserrat text-2xl font-bold mb-2 text-center text-transparent bg-clip-text bg-gradient-to-r from-white to-blue-300">
                 Admin Dashboard
             </h2>
             <h3 class="text-sm text-center text-white/70 mb-6 uppercase tracking-widest">Student Messages</h3>
             
-            <!-- Message List -->
             <div id="messageList" class="flex flex-col gap-4 mb-8">
                 <!-- Messages will be injected here by JavaScript dynamically -->
             </div>
 
-            <!-- Prominent Logout Button at bottom as requested -->
             <button onclick="logout(event)" class="glass-btn w-full py-3.5 rounded-xl font-montserrat font-bold tracking-wide hover:bg-red-500/30 hover:border-red-400 active:scale-95 transition-all duration-300 text-sm flex justify-center items-center gap-2 group text-white">
                 <span class="group-hover:text-red-300 transition-colors">Logout of Dashboard</span>
-                <img src="https://via.placeholder.com/16/ffffff/0f172a?text=X" alt="Logout Icon" class="w-4 h-4 rounded-sm opacity-80 group-hover:opacity-100 transition-opacity">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 opacity-80 group-hover:opacity-100 transition-opacity text-white group-hover:text-red-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
             </button>
         </section>
-
     </main>
 
-    <!-- JavaScript logic -->
     <script>
         function checkAdmin() {
-            console.log("Checking admin authentication...");
-            loadMessages(); // Load messages as soon as admin enters
+            loadMessages(); 
         }
 
         function loadMessages() {
@@ -227,9 +222,8 @@
                 return;
             }
 
-            messageList.innerHTML = ''; // Clear current contents
+            messageList.innerHTML = ''; 
 
-            // Sort newest first
             messages.sort((a, b) => b.id - a.id).forEach(msg => {
                 const card = document.createElement('div');
                 card.className = 'card glass-panel rounded-2xl p-5 hover:bg-white/5 transition-colors border border-white/10 shadow-lg';
@@ -271,22 +265,24 @@
             const index = messages.findIndex(m => m.id === id);
             
             if (index !== -1) {
-                messages[index].status = newStatus; // Update status
-                localStorage.setItem('messages', JSON.stringify(messages)); // Save back to storage
-                loadMessages(); // Re-render the list immediately
+                messages[index].status = newStatus; 
+                localStorage.setItem('messages', JSON.stringify(messages)); 
+                loadMessages(); 
             }
         }
 
         function logout(event) {
             if(event) event.preventDefault();
-            console.log("Admin logging out...");
-            
-            // Clear session storage to properly mark the user as logged out
             sessionStorage.setItem('isLoggedIn', 'false');
-            
-            // Redirect to login page
             window.location.href = 'index.html';
         }
+
+        // Live Cross-Tab Sync
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'messages') {
+                loadMessages();
+            }
+        });
     </script>
 </body>
 </html>
