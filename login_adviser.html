@@ -232,13 +232,7 @@
             <h3 class="font-montserrat text-lg font-bold mb-4 pl-3 border-l-4 border-blue-400">Your Messages</h3>
             
             <div id="studentMessages" class="flex flex-col gap-4">
-                <!-- Example Default Card -->
-                <div class="card glass-panel rounded-2xl p-5 hover:bg-white/5 transition-colors border border-white/10 shadow-lg">
-                    <div class="flex justify-between items-start border-b border-white/10 pb-3 mb-3">
-                        <p class="text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-full bg-yellow-500/20 border border-yellow-500/30 text-yellow-300 mt-1">Pending</p>
-                    </div>
-                    <p class="text-sm text-white/80 leading-relaxed font-light">Your Message content goes here. It will display the text that you submitted to the principal's office.</p>
-                </div>
+                <!-- Messages will load dynamically here -->
             </div>
         </section>
 
@@ -275,8 +269,43 @@
         }
 
         function loadStudentMessages() {
-            console.log("Loading previous messages...");
-            // Logic to fetch and inject messages into #studentMessages would go here
+            const list = document.getElementById('studentMessages');
+            // Fetch messages from localStorage
+            const messages = JSON.parse(localStorage.getItem('messages') || '[]');
+            
+            if (messages.length === 0) {
+                list.innerHTML = '<p class="text-sm text-center text-white/50 py-4">No messages sent yet.</p>';
+                return;
+            }
+
+            list.innerHTML = '';
+            
+            // Sort by ID to show newest first
+            messages.sort((a, b) => b.id - a.id).forEach(msg => {
+                const card = document.createElement('div');
+                card.className = 'card glass-panel rounded-2xl p-5 hover:bg-white/5 transition-colors border border-white/10 shadow-lg';
+                
+                let statusBadge = '';
+                if (msg.status === 'Pending') {
+                    statusBadge = `<p class="text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-full bg-yellow-500/20 border border-yellow-500/30 text-yellow-300 mt-1">Pending</p>`;
+                } else if (msg.status === 'Accepted') {
+                    statusBadge = `<p class="text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-full bg-green-500/20 border border-green-500/30 text-green-300 mt-1">Accepted</p>`;
+                } else {
+                    statusBadge = `<p class="text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-full bg-red-500/20 border border-red-500/30 text-red-300 mt-1">Rejected</p>`;
+                }
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start border-b border-white/10 pb-3 mb-3">
+                        <div>
+                            <strong class="font-montserrat text-sm text-green-300 block">${msg.name}</strong>
+                            <span class="text-xs text-white/50 block mt-1">Section: ${msg.section}</span>
+                        </div>
+                        ${statusBadge}
+                    </div>
+                    <p class="text-sm text-white/80 leading-relaxed font-light whitespace-pre-wrap">${msg.text}</p>
+                `;
+                list.appendChild(card);
+            });
         }
 
         function logout(event) {
@@ -284,7 +313,7 @@
             console.log("Logging out...");
             
             // 1. Clear local/session storage to actually invalidate the session
-            localStorage.clear();
+            // Don't clear localStorage completely otherwise messages delete!
             sessionStorage.setItem('isLoggedIn', 'false');
 
             // 2. Show feedback
@@ -295,7 +324,6 @@
 
             // 4. Redirect to actual login page after a short delay
             setTimeout(() => {
-                // Ensure this file name matches your real login screen (e.g., login.html)
                 window.location.href = 'index.html'; 
             }, 800);
         }
@@ -311,23 +339,22 @@
                 return;
             }
 
-            // Create a new card based on structure
-            const newCard = document.createElement('div');
-            newCard.className = 'card glass-panel rounded-2xl p-5 hover:bg-white/5 transition-colors border border-white/10 shadow-lg mt-4';
-            newCard.style.animation = "cardFadeIn 0.4s ease-out forwards"; // using new animation
-            
-            newCard.innerHTML = `
-                <div class="flex justify-between items-start border-b border-white/10 pb-3 mb-3">
-                    <div>
-                        <strong class="font-montserrat text-sm text-green-300 block">${nameBox.value.trim()}</strong>
-                        <span class="text-xs text-white/50 block mt-1">Section: ${sectionBox.value.trim()}</span>
-                    </div>
-                    <p class="text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-full bg-blue-500/20 border border-blue-500/30 text-blue-300 mt-1">Sent Just Now</p>
-                </div>
-                <p class="text-sm text-white/80 leading-relaxed font-light whitespace-pre-wrap">${msgBox.value.trim()}</p>
-            `;
+            // Create a new message object
+            const newMsg = {
+                id: Date.now(), // Generate unique ID
+                name: nameBox.value.trim(),
+                section: sectionBox.value.trim(),
+                text: msgBox.value.trim(),
+                status: 'Pending'
+            };
 
-            document.getElementById('studentMessages').prepend(newCard);
+            // Retrieve existing messages, append new one, and save back to storage
+            let messages = JSON.parse(localStorage.getItem('messages') || '[]');
+            messages.push(newMsg);
+            localStorage.setItem('messages', JSON.stringify(messages));
+            
+            // Reload UI to show the new message
+            loadStudentMessages();
             
             // Clear all inputs
             nameBox.value = "";
